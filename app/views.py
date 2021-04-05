@@ -133,7 +133,6 @@ def update_contact(email):
         nombre = request.form['nombreActualizado']
         email = request.form['emailActualizado'] 
         perfil= request.form['perfilActualizado']
-
     
         cursor = mysql.get_db().cursor()
         cursor.execute( """
