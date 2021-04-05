@@ -1,34 +1,51 @@
-<table>
-    <thead>
-        <tr>
-            <td>Nombre</td>
-            <td>Correo</td>
-            <td>Perfil</td>
-            <td>Acciones</td>
+{% extends "templates/layout.html" %}
+{% block css %} <link rel="stylesheet" href="../static/css/index.css" type="text/css" /> {% endblock %}
 
-        </tr>
-    </thead>
-    <tbody><!--Si hay mensajes (de flash) muéstralo en pantalla-->
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              <span>{{ message }}</span>
-            </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+{% block title %}
+<h1 class="font-weight-bold">Usuarios registrados</h1>
+<p class="lead text-muted">Aquí puede obtener información de los usuarios registrados en la plataforma</p>
+{% endblock %}
 
-        {% for c in contacts %}
-        <tr>
-            <td>{{ c.0}}</td>
-            <td>{{ c.1}}</td>
-            <td>{{ c.2}}</td>
-            <td>
-                <a href="/edit/{{c.1}}">Editar</a>
-                <a href="/delete/{{c.1}}">Eliminar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block main %}
+    <table>
+        <thead>
+            <tr>
+                <td>Nombre</td>
+                <td>Correo</td>
+                <td>Perfil</td>
+                <td>Acciones</td>
+    
+            </tr>
+        </thead>
+        <tbody><!--Si hay mensajes (de flash) muéstralo en pantalla-->
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+    
+            {% for c in contacts %}
+            <tr>
+                <td>{{ c.0}}</td>
+                <td>{{ c.1}}</td>
+                <td>{{ c.2}}</td>
+                <td>
+                    <a href="/edit/{{c.1}}">Editar</a>
+                    <a href="/delete/{{c.1}}">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
+
+

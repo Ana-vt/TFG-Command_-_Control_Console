@@ -16,7 +16,6 @@ mysql = MySQL(app)
 #Cómo va protegida la sesión
 app.secret_key='mysecretkey'
 
-
 @app.route('/')
 def main():
     if 'nombre' in session:
@@ -134,6 +133,7 @@ def update_contact(email):
         nombre = request.form['nombreActualizado']
         email = request.form['emailActualizado'] 
         perfil= request.form['perfilActualizado']
+
     
         cursor = mysql.get_db().cursor()
         cursor.execute( """
@@ -147,27 +147,3 @@ def update_contact(email):
         flash("Contacto actualizado satisfactoriamente")
         return redirect(url_for('usuarios_registrados'))
 
-@app.route('/prueba')
-def prueba():
-    return render_template("prueba.html")
-
-#El formulario tiene que enviar una petición POST a añadir_contacto
-@app.route('/añadir_contacto', methods=['POST'])
-def añadir_contacto():
-    if request.method=='POST':
-        fullname = request.form['fullname']
-        phone = request.form['phone']
-        email = request.form['email']
-
-        #"cur" me permite guardar las consultas de mysql 
-        cur = mysql.get_db().cursor()
-        cur.execute('INSERT INTO contacts (fullname, phone, email) VALUES (%s, %s, %s)', 
-        (fullname, phone, email))
-        mysql.get_db().commit()
-        #Print los imprime en terminal
-        #print(fullname)
-        #print(phone)
-        #print(email)
-        #Return lo imprime en pantalla
-        flash('Contacto agregado')
-        return redirect(url_for('prueba'))

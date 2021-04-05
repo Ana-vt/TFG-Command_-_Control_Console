@@ -1,31 +1,43 @@
-<form action="/update/{{contact.1}}" method="POST">
-    <div class="input-contenedor">
-        <i class="fa fa-user" aria-hidden="true"></i>
-        <input type="text" name="nombreActualizado" placeholder="Nombre completo" value="{{contact.0}}"/>
-    </div>
+{% extends "templates/layout.html" %}
+{% block css %} <link rel="stylesheet" href="../static/css/index.css" type="text/css" /> {% endblock %}
 
-    <div class="input-contenedor">
-      <i class="fa fa-envelope" aria-hidden="true"></i> 
-      <input type="email" name="emailActualizado" placeholder="Correo electrónico" value="{{contact.1}}"/>
-    </div>
-    <!--<div class="input-contenedor">
-      <i class="fa fa-id-card" aria-hidden="true"></i>
-        Perfil:<br>
-        <input type="radio" name="perfilActualizado" value="Administrador"/>Administrador <br>
-        <input type="radio" name="perfilActualizado" value="Operador"/>Operador<br>
-        <input type="radio" name="perfilActualizado" value="Analista"/>Analista<br>
-    </div>-->
-    <div class="input-contenedor">
-      <i class="fa fa-id-card" aria-hidden="true"></i>
-        <label for="perfil">Perfil:</label>
-          <select class="perfil" name="perfilActualizado">
-            <option value="Administrador">Administrador</option>
-            <option value="Operador" >Operador</option>
-            <option value="Analista" >Analista</option>
-          </select>
-    </div>
-    <button type="submit">
-        Actualizar
-    </button>
+{% block title %}
+<h1 class="font-weight-bold">Editar usuario</h1>
+<p class="lead text-muted">No se olvide de seleccionar el perfil</p>
+{% endblock %}
+
+{% block main %}
+
+<form action="/update/{{contact.1}}" method="POST">
+  <div class="input-contenedor">
+      <i class="fa fa-user" aria-hidden="true"></i>
+      <input type="text" name="nombreActualizado" placeholder="Nombre completo" value="{{contact.0}}"/>
+  </div>
+
+  <div class="input-contenedor">
+    <i class="fa fa-envelope" aria-hidden="true"></i> 
+    <input type="email" name="emailActualizado" placeholder="Correo electrónico" value="{{contact.1}}"/>
+  </div>
+  <div class="input-contenedor">
+    <i class="fa fa-id-card" aria-hidden="true"></i>
+      <label for="perfil">Perfil:</label>
+        <select class="perfil" name="perfilActualizado">
+          <option value="Administrador">Administrador</option>
+          <option value="Operador" >Operador</option>
+          <option value="Analista" >Analista</option>
+        </select>
+  </div>
+  <button type="submit">
+      Actualizar
+  </button>
 </form>
+
+
+
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
+
 

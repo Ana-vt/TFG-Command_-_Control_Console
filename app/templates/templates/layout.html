@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Consola PLICA</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" >
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Ovo&display=swap" rel="stylesheet">
+    {% block css %}{% endblock %}
+ 
+  </head>
+  <body>
+      <!--Navbar vertical-->
+     <div class="d-flex">
+        <div id="sidebar-container" class="bg-primary">
+            <div class="logo">
+                <h4 class=" font-weight-bold">Consola M&C PLICA</h4>
+            </div>
+            <div class="menu">
+              <!--Botón padre-->
+              <button class="dropdown-btn"> <i class="fas fa-columns mr-2 "></i></i>Gestión
+                <i class="fa fa-caret-down"></i>
+              </button>
+
+                <!--Botón hijo-->                
+                <div class="dropdown-container ">
+                  <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Sensores 
+                    <i class="fa fa-caret-down mr-5"></i>
+                  </button> 
+                  <!--Subotón hijo-->
+                  <div class="dropdown-container-sub">
+                      <a href="#" class="d-block p-3"><i class="fa fa-wifi mr-2"></i>Sensores Red WiFi</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-angle-double-up mr-2"></i>Sensores Bluetooth</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-signal mr-2"></i>Sensores Radiofrecuencia</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-mobile mr-2"></i>Sensores Redes Móviles</a>
+                      <a href="#" class="d-block p-3"><i class="fas fa-shield-alt mr-2"></i>Sensores Ciberseguridad</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-table mr-2"></i>Inventario de sensores</a>
+                  </div>
+                  <!--Botón hijo-->  
+                  <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Subsistemas
+                    <i class="fa fa-caret-down mr-5"></i>
+                  </button> 
+                  <!--Subotón hijo-->
+                  <div class="dropdown-container-sub">
+                    <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Big Data</a>
+                    <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Gestión de Flujos</a>
+                    <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema procesamiento</a>
+                    <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema ontologías</a> 
+                </div>
+                  
+                  <!--Botón hijo-->  
+                  <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Configuración
+                    <i class="fa fa-caret-down mr-5"></i>
+                  </button>
+
+                   <!--Subotón hijo-->
+                   <div class="dropdown-container-sub ">
+                     
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Big Data</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Gestión de Flujos</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema procesamiento</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema ontologías</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Correlación</a>
+                      
+                  </div>
+
+                  <!--Botón hijo-->  
+                  <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Certificados
+                    <i class="fa fa-caret-down mr-5"></i>
+                  </button>
+                  <!--Subotón hijo-->
+                  <div class="dropdown-container-sub ">
+                    <a href="#" class="d-block p-3"><i class="fa fa-certificate mr-2"></i>Certificados Kafka</a>
+                    <a href="#" class="d-block p-3"><i class="fa fa-certificate mr-2"></i>Certificados Pandora FMS</a>
+                    
+                </div>
+                   <!--Botón hijo-->  
+                <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Consola Pandora
+                </button>
+                </div>
+              <!--Botón padre-->
+                <button class="dropdown-btn"> <i class="fa fa-user-cog mr-2 " aria-hidden="true"></i>Administración
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                    <!--Botón hijo-->
+                    <div class="dropdown-container ">
+                      <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Control de usuarios
+                        <i class="fa fa-caret-down mr-5"></i>
+                      </button> 
+                      <!--Subotón hijo-->
+                      <div class="dropdown-container-sub ">
+                        <a href="/usuarios_registrados" class="d-block p-3"><i class="fa fa-user mr-2"></i>Mostrar usuarios registrados</a>
+                        <a href="/registro" class="d-block p-3"><i class="fa fa-user-plus mr-2" aria-hidden="true"></i>Crear usuario</a>
+                        <a href="#" class="d-block p-3"><i class="fa fa-user-edit mr-2"></i>Editar usuario</a>
+                        <a href="#" class="d-block p-3"><i class="fa fa-user-minus mr-2"></i>Eliminar usuario</a>
+                        <a href="#" class="d-block p-3"><i class="fa fa-users mr-2"></i>Perfiles de usuario</a>
+                        <a href="#" class="d-block p-3"><i class="fa fa-keyboard mr-2"></i>Registro de acciones</a>
+                      </div>
+                    </div>
+              
+              
+                <button class="dropdown-btn"> <i class="fas fa-chart-area mr-2"></i>Visualización
+                  <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container ">
+                  <a href="#" class="d-block p-3"><i class="fa fa-minus mr-2"></i>Riesgo dinámico</a>
+                  <a href="#" class="d-block p-3"><i class="fa fa-minus mr-2"></i>Consulta de datos</a>
+                </div>
+                  
+            </div>
+
+        </div>
+
+
+         <!--Navbar horizontal-->
+         <div class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+              <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <form class="form-inline position-relative  my-2 d-inline-block">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar">
+                    <button class="btn btn-search position-absolute" type="submit"> <i class="fa fa-search" aria-hidden="true"></i></button>
+                </form>
+                
+                <div class="caja mr-0">
+                <ul class="navbar-nav ml-auto">
+                  <div class="date">
+                    <span id="weekDay" class="weekDay"></span>, 
+                    <span id="day" class="day"></span> de
+                    <span id="month" class="month"></span> del
+                    <span id="year" class="year"></span> &nbsp
+                  </div>
+  
+                  <div class="clock">
+                    <span id="hours" class="hours"></span> :
+                    <span id="minutes" class="minutes"></span> :
+                    <span id="seconds" class="seconds"></span>
+                  </div>
+                </div>
+                </ul>
+              
+                  
+                
+                
+              
+              
+                <!--Dropdown user-->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-user-circle" aria-hidden="true">  {{session['nombre']}}</i>
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/login"><i class="fa fa-sign-out-alt mr-2" aria-hidden="true"></i>Cerrar sesión</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Editar perfil</a>
+                        
+                        
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div> 
+            </nav>
+
+              <div id="content">
+                <section class= "py-3">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-lg-9">
+                        {% block title %}{% endblock %}
+              
+                      </div>
+                      <div class="col-lg-3 d-flex">
+                        <button class="btn btn-primary w-100 align-self-center">Ver novedades</button>
+                      </div>
+
+                    </div>
+                    <main>
+                        {% block main %}{% endblock %}
+                    </main>
+                  </div>
+                </section>
+              </div>
+        </div>
+
+  </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script>
+        /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var i;
+        
+        for (i = 0; i < dropdown.length; i++) {
+          dropdown[i].addEventListener("click", function() {
+          this.classList.toggle("active");
+          var dropdownContent = this.nextElementSibling;
+          if (dropdownContent.style.display === "block") {
+          dropdownContent.style.display = "none";
+          } else {
+          dropdownContent.style.display = "block";
+          }
+          });
+        }
+        </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    {% block js %}{% endblock %}
+  </body>
+</html>
