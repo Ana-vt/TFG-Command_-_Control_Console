@@ -1,0 +1,22 @@
+<!--Si hay mensajes (de flash) muéstralo en pantalla-->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+    <p>{{message}}</p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+
+
+<!--Cuando envíes datos envíalos a la ruta: action-->
+<form action="/añadir_contacto" method='POST'>
+    <!--El formulario me va a enviar los datos en los parametros "name": fullname, phone, placeholder-->
+    <input type="text" name="fullname" placeholder="Enter fullname">
+    <input type="text" name="phone" placeholder="Enter phone">
+    <input type="text" name="email" placeholder="Enter email">
+    <button type="submit">
+        Save
+    </button>
+
+</form>

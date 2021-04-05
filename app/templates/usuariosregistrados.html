@@ -1,0 +1,34 @@
+<table>
+    <thead>
+        <tr>
+            <td>Nombre</td>
+            <td>Correo</td>
+            <td>Perfil</td>
+            <td>Acciones</td>
+
+        </tr>
+    </thead>
+    <tbody><!--Si hay mensajes (de flash) muéstralo en pantalla-->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% for c in contacts %}
+        <tr>
+            <td>{{ c.0}}</td>
+            <td>{{ c.1}}</td>
+            <td>{{ c.2}}</td>
+            <td>
+                <a href="/edit/{{c.1}}">Editar</a>
+                <a href="/delete/{{c.1}}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
