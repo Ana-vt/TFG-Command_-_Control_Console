@@ -1,0 +1,48 @@
+{% extends "templates/layout.html" %}
+{% block css %} <link rel="stylesheet" href="../static/css/index.css" type="text/css" /> {% endblock %}
+
+{% block title %}
+<h1 class="font-weight-bold">Perfiles de usuario</h1>
+<p class="lead text-muted">Aquí puede obtener información de los tipos de perfil que gestiona PLICA</p>
+{% endblock %}
+
+{% block main %}        
+<table class="table table-bordered table-striped bg-white">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Perfil</th>
+        <th scope="col">Descripción</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Administrador</td>
+        <td>Un administrador tiene acceso a todas las secciones de la consola. Es el que gestiona los usuarios, pudiendo crearlos, editarlos o incluso eliminarlos.</td>
+        <td>Gestionar usuarios</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Operador</td>
+        <td>Un operador tendrá acceso limitado. No podrá gestionar usuarios, tan sólo su perfil propio. Puede consultar información pero no modificarla.</td>
+        <td>Editar perfil Consultar datos</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>Analista</td>
+        <td>Un analista tendrá acceso limitado. No podrá gestionar usuarios, tan sólo su propio perfil. Puede realizar tareas de configuración sobre los subsistemas plica.</td>
+        <td>Editar perfil Configurar datos</td>
+      </tr>
+    </tbody>
+  </table>
+    
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+<script src="../static/js/usuariosregistrados.js"></script>
+{% endblock %}
+
+

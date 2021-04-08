@@ -66,6 +66,8 @@ def registro():
         else:
             flash("Ya existe un usuario con dicho correo electrónico")
             return redirect(url_for("registro"))
+
+        
         
         return redirect(url_for('index')) #PORQUE SE REGISTRA DESDE DENTRO
 @app.route('/login', methods = ["GET", "POST"])
@@ -95,6 +97,7 @@ def login():
             if (bcrypt.checkpw(password_encode, password_encriptada_encode)):
                 session["nombre"] = row[0]
                 session["email"] = row[1]
+                session["perfil"] = row[2]
                 return redirect(url_for("index"))
             else:
                 flash("La contraseña introducida es incorrecta")
@@ -108,7 +111,12 @@ def usuarios_registrados():
     cur = mysql.get_db().cursor()
     cur.execute('SELECT * FROM usuarios')
     data = cur.fetchall()
-    return render_template("usuariosregistrados.html", contacts = data)
+    perfil = session.get('perfil')
+    print(perfil)
+    if (perfil == 'Administrador'):
+        return render_template("usuariosregistrados.html", contacts = data)
+    else:
+        return render_template("noadmin/usuariosregistrados.html", contacts = data)
 
 @app.route('/delete/<string:email>')
 def delete_contact(email):
@@ -146,3 +154,6 @@ def update_contact(email):
         flash("Contacto actualizado satisfactoriamente")
         return redirect(url_for('usuarios_registrados'))
 
+@app.route('/perfiles')
+def perfiles():
+    return render_template("perfiles.html")

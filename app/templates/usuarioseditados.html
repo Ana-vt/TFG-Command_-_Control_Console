@@ -1,36 +1,48 @@
 {% extends "templates/layout.html" %}
-{% block css %} <link rel="stylesheet" href="../static/css/index.css" type="text/css" /> {% endblock %}
+{% block css %} 
+<link rel="stylesheet" href="../static/css/index.css" type="text/css" />
+<link rel="stylesheet" href="../static/css/usuarioseditados.css" type="text/css"/>
+
+{% endblock %}
 
 {% block title %}
 <h1 class="font-weight-bold">Editar usuario</h1>
-<p class="lead text-muted">No se olvide de seleccionar el perfil</p>
+<p class="lead text-muted">No se olvide de seleccionar el perfil deseado</p>
 {% endblock %}
 
 {% block main %}
 
-<form action="/update/{{contact.1}}" method="POST">
-  <div class="input-contenedor">
-      <i class="fa fa-user" aria-hidden="true"></i>
-      <input type="text" name="nombreActualizado" placeholder="Nombre completo" value="{{contact.0}}"/>
+<div class="row">
+  <div class="col-md-5">
+    <div class="card card-body">
+      <form action="/update/{{contact.1}}" method="POST">
+        <label for="nombreUsuario">Nombre de usuario</label>
+        <div class="input-contenedor">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" name="nombreActualizado" placeholder="Nombre completo" value="{{contact.0}}"/>
+        </div>
+        <label for="correoUsuario">Correo electrónico</label>
+        <div class="input-contenedor">
+          <i class="fa fa-envelope" aria-hidden="true"></i> 
+          <input type="email" name="emailActualizado" placeholder="Correo electrónico" value="{{contact.1}}"/>
+        </div>
+        <div class="input-contenedor">
+          <i class="fa fa-id-card" aria-hidden="true"></i>
+            <label for="perfil">Perfil:</label>
+              <select class="perfil" name="perfilActualizado">
+                <option value="Administrador">Administrador</option>
+                <option value="Operador" >Operador</option>
+                <option value="Analista" >Analista</option>
+              </select>
+        </div>
+        <button type="submit" class="btn btn-outline-success">
+            Actualizar
+        </button>
+      </form>
+    </div>
   </div>
+</div>
 
-  <div class="input-contenedor">
-    <i class="fa fa-envelope" aria-hidden="true"></i> 
-    <input type="email" name="emailActualizado" placeholder="Correo electrónico" value="{{contact.1}}"/>
-  </div>
-  <div class="input-contenedor">
-    <i class="fa fa-id-card" aria-hidden="true"></i>
-      <label for="perfil">Perfil:</label>
-        <select class="perfil" name="perfilActualizado">
-          <option value="Administrador">Administrador</option>
-          <option value="Operador" >Operador</option>
-          <option value="Analista" >Analista</option>
-        </select>
-  </div>
-  <button type="submit">
-      Actualizar
-  </button>
-</form>
 
 
 

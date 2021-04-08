@@ -1,5 +1,5 @@
 {% extends "templates/layout.html" %}
-{% block css %} <link rel="stylesheet" href="../static/css/index.css" type="text/css" /> {% endblock %}
+{% block css %} <link rel="stylesheet" href="../../static/css/index.css" type="text/css" /> {% endblock %}
 
 {% block title %}
 <h1 class="font-weight-bold">Usuarios registrados</h1>
@@ -39,8 +39,8 @@
                 <td>{{ c.1}}</td>
                 <td>{{ c.2}}</td>
                 <td> 
-                    <a href="/edit/{{c.1}}" class="btn btn-outline-dark"><i class="fa fa-user-edit mr-2"></i>Editar</a>
-                    <a href="/delete/{{c.1}}" class="btn btn-outline-dark btn-delete"><i class="fa fa-user-minus mr-2"></i>Eliminar</a>
+                    No tienes permisos para editar o eliminar perfiles.<br>
+                    <a href="/perfiles" class="text-info">Para más información</a>
                 </td>
                     
             </tr>
