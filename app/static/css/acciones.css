@@ -1,0 +1,27 @@
+td, th, table{
+    border:double;
+}
+th{
+    text-align: center;
+    background-color:#F9CC54;
+    height: 30px;
+}
+td{
+    padding:5px;
+}
+
+tr{
+    background-color:#fff;
+}
+tr:nth-child(odd){
+    background-color: lightgray;
+}
+tbody > tr:hover{
+    background-color:#DAF7A6 ;
+}
+
+table{
+    border-color:salmon;
+    border-collapse: collapse;
+
+}

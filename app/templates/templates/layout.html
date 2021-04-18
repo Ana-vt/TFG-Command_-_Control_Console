@@ -99,7 +99,7 @@
                         <!--<a href="#" class="d-block p-3"><i class="fa fa-user-edit mr-2"></i>Editar usuario</a>
                         <a href="#" class="d-block p-3"><i class="fa fa-user-minus mr-2"></i>Eliminar usuario</a>-->
                         <a href="/perfiles" class="d-block p-3"><i class="fa fa-users mr-2"></i>Perfiles de usuario</a>
-                        <a href="#" class="d-block p-3"><i class="fa fa-keyboard mr-2"></i>Registro de acciones</a>
+                        <a href="/acciones" class="d-block p-3"><i class="fa fa-keyboard mr-2"></i>Registro de acciones</a>
                       </div>
                     </div>
               
@@ -160,7 +160,7 @@
                         <i class="fa fa-user-circle" aria-hidden="true">  {{session['nombre']}}</i>
                       </a>
                       <div class="dropdown-menu " aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/login"><i class="fa fa-sign-out-alt mr-0 ml-0" aria-hidden="true"></i>Cerrar sesión</a>
+                        <a class="dropdown-item" href="/salir"><i class="fa fa-sign-out-alt mr-0 ml-0" aria-hidden="true"></i>Cerrar sesión</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/edit/{{session['email']}}">Editar perfil</a>
                       </div>

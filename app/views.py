@@ -3,6 +3,7 @@ from flask import Flask, render_template, url_for, request, redirect, flash, ses
 from flaskext.mysql import MySQL
 #from flask_mysqldb import MySQL
 import bcrypt
+import time
 
 salt = bcrypt.gensalt()
 #------------------Inicializo BBDD------------------------
@@ -23,7 +24,7 @@ def main():
         if (perfil == 'Administrador'):
             return render_template("admin/index.html")
         elif(perfil != 'Administrador'):
-            return render_template("noadmin/usuariosregistrados.html")
+            return render_template("noadmin/index.html")
     else:
         return render_template("login.html")
 
@@ -33,13 +34,16 @@ def index():
     if (perfil == 'Administrador'):
         return render_template("admin/index.html")
     else:
-        return render_template("noadmin/usuariosregistrados.html")
+        return render_template("noadmin/index.html")
 
 @app.route('/registro', methods = ["GET", "POST"])
 def registro():
     if request.method == "GET":
-        return render_template("registro.html")
+        return render_template("admin/registroframe.html")
     else:
+            import time
+            ts=time.time()
+            print(time.ctime(ts))
             nombre = request.form["nombreRegistro"]
             email = request.form["emailRegistro"]
             perfil = request.form["perfilRegistro"]
@@ -60,7 +64,7 @@ def registro():
                 return redirect (url_for("registro"))
             
             cur = mysql.get_db().cursor()
-            consulta='SELECT nombre, email, perfil, password FROM usuarios where email =%s'
+            consulta='SELECT  iduser, nombre, email, perfil, password FROM usuarios where email =%s'
             cur.execute(consulta, [email])
             row = cur.fetchone()
             if row == None:
@@ -77,6 +81,10 @@ def login():
     if request.method == "GET":
           return render_template("login.html")
     else:
+        import time
+        ts=time.time()
+        tord=time.ctime(ts)
+        print(tord)
         email = request.form["emailLogin"] 
         password = request.form["passwordLogin"]
         password_encode = password.encode("utf-8")
@@ -89,23 +97,24 @@ def login():
             return redirect (url_for("login"))
 
         cur = mysql.get_db().cursor()
-        consulta='SELECT nombre, email, perfil, password FROM usuarios where email =%s'
+        consulta='SELECT iduser, nombre, email, perfil, password FROM usuarios where email =%s'
         cur.execute(consulta, [email])
         row = cur.fetchone()
         cur.close()
 
         if (row != None):
-            password_encriptada_encode = row[3].encode()
+            password_encriptada_encode = row[4].encode()
             if (bcrypt.checkpw(password_encode, password_encriptada_encode)):
-                session["nombre"] = row[0]
-                session["email"] = row[1]
-                session["perfil"] = row[2]
+                session["id"]= row[0]
+                session["nombre"] = row[1]
+                session["email"] = row[2]
+                session["perfil"] = row[3]
                 return redirect(url_for("main"))
             else:
-                flash("La contraseña introducida es incorrecta")
+                flash("Las credenciales introducidas son incorrectas")
                 return(render_template("login.html"))
         if( row == None):
-            flash("El correo electrónico introducido es incorrecto")
+            flash("Las credenciales introducidas son incorrectas")
             return (render_template("login.html"))
 
 @app.route('/usuarios_registrados')
@@ -113,11 +122,7 @@ def usuarios_registrados():
     cur = mysql.get_db().cursor()
     cur.execute('SELECT * FROM usuarios')
     data = cur.fetchall()
-    #perfil = session.get('perfil')
-    #if (perfil == 'Administrador'):
     return render_template("admin/usuariosregistrados.html", contacts = data)
-    #else:
-        #return render_template("noadmin/usuariosregistrados.html", contacts = data)
 
 @app.route('/delete/<string:email>')
 def delete_contact(email):
@@ -158,3 +163,33 @@ def update_contact(email):
 @app.route('/perfiles')
 def perfiles():
     return render_template("admin/perfiles.html")
+
+@app.route('/acciones')
+def acciones():
+    return render_template("admin/acciones.html")
+
+
+@app.route('/salir')
+def salir():
+    session.clear()
+    return redirect(url_for("main"))
+
+@app.route('/time')
+def time():
+    import time
+    from datetime import datetime
+
+    start_time = time.process_time()
+
+    ts=time.time()
+    print(ts) #segundos desde epoch con precisión de microsegundos (epoch=1 enero 1970)
+    print(time.ctime(ts)) #convertido a tiempo del ordenador
+
+    now= datetime.fromtimestamp(ts)#convertido a fecha separada por guiones y hora
+    print(now)
+
+    end_time = time.process_time()
+
+    print("tiempo de duración =", end_time-start_time)
+    return "hola"
+
