@@ -10,18 +10,16 @@ td{
     padding:5px;
 }
 
-tr{
-    background-color:#fff;
-}
 tr:nth-child(odd){
     background-color: lightgray;
 }
-tbody > tr:hover{
-    background-color:#DAF7A6 ;
+tr:hover{
+    background-color: aquamarine;
+}
+tr{
+    background-color:#fff;
 }
 
-table{
-    border-color:salmon;
-    border-collapse: collapse;
 
-}
+
+

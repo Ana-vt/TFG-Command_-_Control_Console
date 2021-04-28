@@ -1,5 +1,5 @@
 from app import app
-from flask import Flask, render_template, url_for, request, redirect, flash, session
+from flask import Flask, render_template, url_for, request, redirect, flash, session, make_response
 from flaskext.mysql import MySQL
 #from flask_mysqldb import MySQL
 import bcrypt
@@ -35,6 +35,8 @@ def index():
         return render_template("admin/index.html")
     else:
         return render_template("noadmin/index.html")
+
+#------------------------------ADMINISTRACIÓN--------------------------------------------------------
 
 @app.route('/registro', methods = ["GET", "POST"])
 def registro():
@@ -100,7 +102,8 @@ def login():
         consulta='SELECT iduser, nombre, email, perfil, password FROM usuarios where email =%s'
         cur.execute(consulta, [email])
         row = cur.fetchone()
-        cur.close()
+        
+        
 
         if (row != None):
             password_encriptada_encode = row[4].encode()
@@ -109,6 +112,18 @@ def login():
                 session["nombre"] = row[1]
                 session["email"] = row[2]
                 session["perfil"] = row[3]
+
+                consulta2= 'SELECT idactions FROM actions WHERE title LIKE "%login%"' 
+                cur.execute(consulta2)
+                act=cur.fetchone()
+
+                consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+                cur.execute(consulta3, [email])
+                id = cur.fetchone()
+                
+                cur.execute('INSERT INTO user_action (id_user, action) VALUES (%s,%s)', (id,act))
+                mysql.get_db().commit()
+                cur.close()
                 return redirect(url_for("main"))
             else:
                 flash("Las credenciales introducidas son incorrectas")
@@ -166,14 +181,65 @@ def perfiles():
 
 @app.route('/acciones')
 def acciones():
-    return render_template("admin/acciones.html")
+    cur = mysql.get_db().cursor()
+    cur.execute('SELECT * FROM user_action')
+    data = cur.fetchall()
+    cur.execute('SELECT nombre,email FROM usuarios INNER JOIN user_action ON usuarios.iduser=user_action.id_user GROUP BY timestamp')
+    dato = cur.fetchall()
+    return render_template("admin/acciones.html", acciones= data, usuarios = dato)
 
+#-------------------------------------------GESTIÓN-----------------------------------------------------------------
+
+@app.route('/sensores')
+def sensores():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/sensores.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensores.html")
+ 
+@app.route('/sensores2')
+def sensores2():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/sensores2.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensores2.html")
 
 @app.route('/salir')
 def salir():
     session.clear()
     return redirect(url_for("main"))
 
+@app.route('/helloworld')
+def hello_world():
+    resp = make_response(render_template("admin/sensores.html"))
+    # Set a same-site cookie for first-party contexts
+    resp.set_cookie('cookie1', 'value1', samesite='None')
+    # Ensure you use "add" to not overwrite existing cookie headers
+    # Set a cross-site cookie for third-party contexts
+    resp.headers.add('Set-Cookie','cookie2=value2; SameSite=None; Secure') #nombre=valor
+    return resp
+@app.route('/cookie')
+def cookie():
+    resp = make_response(render_template('admin/sensores.html'))
+    resp.set_cookie('somecookiename', 'I am cookie')
+    resp.set_cookie(
+        "somecookiename",
+        value= "I am a cookie",
+        max_age=25630,
+        expires=None,
+        path = request.path,
+        domain= ".app.localhost", #dominio que puede leer la cookie
+        secure= False,
+        httponly=True, #el pone false
+        samesite= None
+        )
+    return resp
+@app.route('/get-cookie/')
+def get_cookie():
+    username = request.cookies.get('somecookiename')
+    return username
 @app.route('/time')
 def time():
     import time
@@ -193,3 +259,27 @@ def time():
     print("tiempo de duración =", end_time-start_time)
     return "hola"
 
+@app.route('/cookiejn')
+def cookiejn():
+    res = make_response("Cookies" , 200)
+    cookies = request.cookies
+    flavor = cookies.get("flavor")
+    choctype = cookies.get("chocolate type")
+    smel = cookies.get("smell")
+    print(flavor, smel, choctype)
+    
+    res.set_cookie(
+        "flavor",
+        value= "chocolate chip",
+        max_age=10,
+        expires=None,
+        path=request.path,
+        domain=None, #dominio que puede leer la cookie
+        secure= False,
+        httponly=False, #el pone false
+        samesite= None
+        )
+    res.set_cookie("chocolate type", "milka")
+    res.set_cookie("smell", "lemon")
+    
+    return res

@@ -1,0 +1,16 @@
+{% extends "noadmin/templates/layoutna.html" %}
+{% block css %} <link rel="stylesheet" href="../../static/css/index.css" type="text/css" /> {% endblock %}
+
+{% block title %}
+<h1 class="font-weight-bold">Sensores del sistema noadmin</h1>
+{% endblock %}
+
+{% block main %}
+<iframe id="sensores" src="http://192.168.1.144/pandora_console/index.php?sec=view&sec2=operation/agentes/estado_agente&group_id=17" sandbox="allow-forms allow-top-navigation allow-popups allow-scripts allow-modals allow-presentation allow-same-origin" target="_parent" width='1150' height='550' target="sensores" blank="0"></iframe>
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
+
+

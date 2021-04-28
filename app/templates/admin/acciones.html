@@ -15,33 +15,23 @@
         <tr>
             <th>Nombre</th>
             <th>Correo</th>
-            <th colspan="2">Tiempo</th>
+            <th>Timestamp</th>
             <th>Acción</th>
 
         </tr>
     </thead>
     <tbody>
+        {% for a in acciones %}
+        {% for u in usuarios %}
         <tr>
-          <td>ola</td>
-          <td>hola</td>
-          <td>timestamp</td>
-          <td>duracion</td>
-          <td>Se ha registrado un nuevo usuario</td>
+          <td>{{u.0}}</td>
+          <td>{{u.1}}</td>
+          <td>{{a.2}}</td>
+          <td>{{a.1}}</td>
         </tr>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>Ha iniciado sesión un nuevo usuario</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>Se ha configurado el sensor xxxx</td>
-        </tr>
+        {% endfor %}
+        {% endfor %}
+        
       </tbody>
 </table>
 

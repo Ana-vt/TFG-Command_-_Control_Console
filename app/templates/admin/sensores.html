@@ -1,0 +1,17 @@
+{% extends "templates/layout.html" %}
+{% block css %} 
+    <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+{% endblock %}
+
+{% block title %}
+    <h1 class="font-weight-bold">Sensores del sistema admin</h1>
+{% endblock %}
+                        
+{% block main %}
+<iframe id="sensores" src="http://192.168.1.150/pandora_console/index.php?sec=view&sec2=operation/agentes/estado_agente&group_id=17" sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups allow-modals allow-presentation allow-top-navigation-by-user-activation" width='1150' height='550' target="sensores"></iframe>
+
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
