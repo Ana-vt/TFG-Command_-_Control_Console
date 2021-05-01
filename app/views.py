@@ -4,7 +4,9 @@ from flaskext.mysql import MySQL
 #from flask_mysqldb import MySQL
 import bcrypt
 import time
-
+from dotenv import load_dotenv
+load_dotenv
+import os
 salt = bcrypt.gensalt()
 #------------------Inicializo BBDD------------------------
 #Config de la BBDD
@@ -16,6 +18,10 @@ mysql = MySQL(app)
 
 #Cómo va protegida la sesión
 app.secret_key='mysecretkey'
+
+@app.route('/env')
+def env():
+    return f'Hello, {os.getenv("SECRET_VALUE")} the meaning of life is {os.getenv("MEANING_OF_LIFE")}'
 
 @app.route('/')
 def main():
@@ -190,21 +196,41 @@ def acciones():
 
 #-------------------------------------------GESTIÓN-----------------------------------------------------------------
 
-@app.route('/sensores')
-def sensores():
+@app.route('/sensoresWF')
+def sensoresWF():
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensores.html")
+        return render_template("admin/sensoresWF.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensoresWF.html")
+@app.route('/sensoresBT')
+def sensoresBT():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/sensoresBT.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensoresBT.html")
+@app.route('/sensoresRF')
+def sensoresRF():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/sensoresRF.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensoresRF.html")
+@app.route('/sensoresRM')
+def sensoresRM():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/sensoresRM.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensoresRM.html")
+@app.route('/grupos')
+def grupos():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/grupo.html")
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensores.html")
- 
-@app.route('/sensores2')
-def sensores2():
-    perfil = session.get('perfil')
-    if (perfil == 'Administrador'):
-        return render_template("admin/sensores2.html")
-    elif(perfil != 'Administrador'):
-        return render_template("noadmin/sensores2.html")
 
 @app.route('/salir')
 def salir():
@@ -232,7 +258,7 @@ def cookie():
         path = request.path,
         domain= ".app.localhost", #dominio que puede leer la cookie
         secure= False,
-        httponly=True, #el pone false
+        httponly=False, #el pone false
         samesite= None
         )
     return resp
