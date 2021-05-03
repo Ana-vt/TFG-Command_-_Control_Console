@@ -195,7 +195,7 @@ def acciones():
     return render_template("admin/acciones.html", acciones= data, usuarios = dato)
 
 #-------------------------------------------GESTIÓN-----------------------------------------------------------------
-
+#-----------------------SENSORES------------------------------------------------------------------------------------
 @app.route('/sensoresWF')
 def sensoresWF():
     perfil = session.get('perfil')
@@ -224,11 +224,20 @@ def sensoresRM():
         return render_template("admin/sensoresRM.html")
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRM.html")
-@app.route('/grupos')
-def grupos():
+#-----------------------SUBSISTEMAS------------------------------------------------------------------------------------
+@app.route('/subsistemaBD')
+def subsistemaBD():
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/grupo.html")
+        return render_template("admin/subsistemaBD.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaBD.html")
+@app.route('/grupos')
+def grupos():
+    grupo = {os.getenv("GRUPO_WIFI")}
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/grupo.html", grupo=grupo)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensores.html")
 
