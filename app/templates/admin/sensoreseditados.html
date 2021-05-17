@@ -1,0 +1,61 @@
+{% extends "templates/layout.html" %}
+{% block css %} <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+<link rel="stylesheet" href="../../static/css/usuarioseditados.css" type="text/css" />
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='../../../../static/css/sensoreseditados.css') }}">
+{% endblock %}
+
+{% block title %}
+<h1 class="font-weight-bold">Editar sensor</h1>
+<p class="lead text-muted">No se olvide de seleccionar el tipo de sensor</p>
+{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-md-5">
+      <div class="card card-body">
+        <form action="/update/sensores/{{sensores.0}}" method="POST">
+          <label for="nombreSensor">Nombre del sensor</label>
+          <div class="input-contenedor">
+              <i class="fa fa-user" aria-hidden="true"></i>
+              <input type="text" name="nombreActualizado" placeholder="Nombre completo" value="{{sensores.1}}"/>
+          </div>
+          <div class="input-contenedor">
+            <i class="fa fa-id-card" aria-hidden="true"></i>
+              <label for="tipo">Tipo:</label>
+                <select class="tipo" name="tipoActualizado">
+                  <option value="Bluetooth">Bluetooth</option>
+                  <option value="WiFi">WiFi</option>
+                  <option value="RedesMoviles">RedesMoviles</option>
+                  <option value="RadioFrecuencia">RadioFrecuencia</option>
+                  <option value="ThreatIntelligence">Threat Intelligence</option>
+                  <option value="UBA">UBA</option>
+                  <option value="PresenciaFisica">Presencia Física</option>
+                </select>
+          </div>
+          <label for="macSensor">MAC del sensor</label>
+          <div class="input-contenedor">
+              <i class="fa fa-user" aria-hidden="true"></i>
+              <input type="text" name="macActualizada" placeholder="MAC completa" value="{{sensores.3}}"/>
+          </div>
+          <label for="nombreUsuario">IP del sensor</label>
+          <div class="input-contenedor">
+              <i class="fa fa-user" aria-hidden="true"></i>
+              <input type="text" name="ipActualizada" placeholder="IP completa" value="{{sensores.4}}"/>
+          </div>
+         
+          <button type="submit" class="btn btn-outline-success">
+              Actualizar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+    
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+<script src="../static/js/sensoresregistrados.js"></script>
+{% endblock %}
+

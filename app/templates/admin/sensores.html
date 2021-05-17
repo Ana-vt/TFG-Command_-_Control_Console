@@ -1,9 +1,15 @@
 {% extends "templates/layout.html" %}
-{% block css %} <link rel="stylesheet" href="../../static/css/index.css" type="text/css" /> {% endblock %}
+{% block css %} <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+<link rel="stylesheet" href="../../static/css/sensores.css" type="text/css" />
+{% endblock %}
+
 
 {% block title %}
-<h1 class="font-weight-bold">Usuarios registrados</h1>
-<p class="lead text-muted">Aquí puede obtener información de los usuarios registrados en la consola</p>
+<h1 class="font-weight-bold">Inventario de sensores</h1>
+<p class="lead text-muted">Aquí puede obtener información de los sensores registrados en PLICA</p>
+<div class="botondiv">
+    <a class="myButton" href="/registrosensores"><i class="fas fa-plus mr-2"></i>Registrar</a>
+</div>
 {% endblock %}
 
 {% block main %}
@@ -11,9 +17,11 @@
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Correo</th>
-                <th>Perfil</th>
+                <th>Tipo</th>
+                <th>MAC</th>
+                <th>IP</th>
                 <th>Acciones</th>
+
     
             </tr>
         </thead>
@@ -33,14 +41,15 @@
             {% endif %}
             {% endwith %}
     
-            {% for c in contacts %}
+            {% for s in sensores %}
             <tr>
-                <td>{{ c.1}}</td>
-                <td>{{ c.2}}</td>
-                <td>{{ c.3}}</td>
+                <td>{{ s.1}}</td>
+                <td>{{ s.2}}</td>
+                <td>{{ s.3}}</td>
+                <td>{{ s.4}}</td>
                 <td> 
-                    <a href="/edit/{{c.2}}" class="btn btn-info"><i class="fa fa-user-edit mr-2"></i>Editar</a>
-                    <a href="/delete/{{c.0}}" class="btn btn-danger"><i class="fa fa-user-minus mr-2"></i>Eliminar</a>
+                    <a href="/edit/sensor/{{s.0}}" class="btn btn-info"><i class="fa fa-edit mr-2"></i>Editar</a>
+                    <a href="/delete/sensor/{{s.0}}" class="btn btn-danger"><i class="fa fa-minus mr-2"></i>Eliminar</a>
                 </td>
                     
             </tr>
@@ -52,10 +61,7 @@
 
 {% block js %}
 <script src="../static/js/clock.js"></script>
-<script src="../static/js/usuariosregistrados.js"></script>
-<script src="../../static/js/usuariosregistrados.js"></script>
-<script src="../../static/js/clock.js"></script>
-
+<script src="../static/js/sensoresregistrados.js"></script>
 {% endblock %}
 
 

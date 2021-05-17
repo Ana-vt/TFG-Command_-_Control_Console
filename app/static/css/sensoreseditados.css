@@ -1,0 +1,25 @@
+
+.card-body{
+    width:100%;
+    padding:15px;
+    background-color: blueviolet;
+}
+input[type="text"]{
+    font-size: 10px;
+    width:85%;
+    padding:10px;
+    
+   
+}
+.input-contenedor{
+    margin-bottom: 15px;
+    border: 1px transparent #aaa;
+    
+}
+
+.botondiv{
+    padding-bottom: 10px;
+}
+
+
+

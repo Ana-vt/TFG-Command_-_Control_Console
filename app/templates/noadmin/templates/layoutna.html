@@ -39,7 +39,7 @@
                       <a href="/sensoresRF" class="d-block p-3"><i class="fa fa-signal mr-2"></i>Sensores Radiofrecuencia</a>
                       <a href="/sensoresRM" class="d-block p-3"><i class="fa fa-mobile mr-2"></i>Sensores Redes Móviles</a>
                       <!--<a href="#" class="d-block p-3"><i class="fas fa-shield-alt mr-2"></i>Sensores Ciberseguridad</a>-->
-                      <a href="#" class="d-block p-3"><i class="fa fa-table mr-2"></i>Inventario de sensores</a>
+                      <a href="/sensores" class="d-block p-3"><i class="fa fa-table mr-2"></i>Inventario de sensores</a>
                   </div>
                   <!--Botón hijo-->  
                   <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Subsistemas
@@ -48,9 +48,10 @@
                   <!--Subotón hijo-->
                   <div class="dropdown-container-sub">
                     <a href="/subsistemaBD" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Big Data</a>
-                    <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Gestión de Flujos</a>
-                    <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema procesamiento</a>
-                    <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema ontologías</a> 
+                    <a href="/subsistemaAA" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Apredizaje Automático</a>
+                    <a href="/subsistemaCM" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Consola de Mando</a>
+                    <a href="/subsistemaO" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Ontologías</a>
+                    <a href="/subsistemaC" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Correlación</a>
                   </div>
                   
                   <!--Botón hijo-->  
@@ -62,9 +63,9 @@
                    <div class="dropdown-container-sub ">
                      
                       <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Big Data</a>
-                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Gestión de Flujos</a>
-                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema procesamiento</a>
-                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema ontologías</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Apredizaje Automático</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Consola de Mando</a>
+                      <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Ontologías</a>
                       <a href="#" class="d-block p-3"><i class="fa fa-database mr-2"></i>Subsistema Correlación</a>
                       
                   </div>
@@ -84,8 +85,7 @@
                     <a href="#" class="d-block p-3"><i class="fa fa-minus mr-2"></i>Consola Pandora</a>
                   </div>-->
                   <div>
-                    <button class="dropdown-btn"><i class="fa fa-minus mr-2"></i>Consola Pandora</button>
-                    <a href="http://192.168.1.144/pandora_console/index.php?sec=main"></a>
+                    <button class="dropdown-btn" id="miBoton"><i class="fa fa-minus mr-2"></i>Consola Pandora</button>
                   </div>
                 </div>
               
@@ -180,6 +180,13 @@
   </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script>
+      const boton = document.querySelector("#miBoton");
+	    boton.addEventListener("click", function(evento){
+        location.href = "/consolaPandora"
+
+	    });
+    </script>
     <script>
         /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
         var dropdown = document.getElementsByClassName("dropdown-btn");

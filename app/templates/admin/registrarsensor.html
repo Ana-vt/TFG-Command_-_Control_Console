@@ -1,0 +1,72 @@
+{% extends "templates/layout.html" %}
+{% block css %} <link rel="stylesheet" href="../../static/css/index.css" type="text/css" /> 
+<link rel="stylesheet" href="../../static/css/sensoresregistrados.css" type="text/css" /> 
+{% endblock %}
+
+{% block title %}
+    <h1 class="font-weight-bold">Registro de sensores</h1>
+{% endblock %}
+                        
+{% block main %}
+    
+
+<!--Si hay mensajes (de flash) muéstralo en pantalla-->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span>{{ message }}</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div class="row content-info">
+    <form class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12" method="POST" action="/registrosensores">
+      <fieldset>
+        <legend></legend>
+        <div class="form-group">
+            <i class="fa fa-bookmark" aria-hidden="true"></i>
+          <label>Nombre del sensor</label>
+          <input type="text" class="form-control" name="nombreSensor" placeholder="Introduzca el nombre del sensor">
+        </div>
+        <div class="form-group">
+        <i class="fa fa-id-card" aria-hidden="true"></i>
+        <label for="tipo">Tipo:</label>
+          <select class="tipo" name="tipoRegistro">
+            <option value="Bluetooth">Bluetooth</option>
+            <option value="WiFi">WiFi</option>
+            <option value="RedesMoviles">RedesMoviles</option>
+            <option value="RadioFrecuencia">RadioFrecuencia</option>
+            <option value="ThreatIntelligence">Threat Intelligence</option>
+            <option value="UBA">UBA</option>
+            <option value="PresenciaFisica">Presencia Física</option>
+          </select>
+        </div>
+        <div class="form-group">
+            <i class="fa fa-bookmark" aria-hidden="true"></i>
+            <label>MAC del sensor</label>
+            <input type="text" class="form-control" name="macRegistro" placeholder="Introduzca la dirección MAC">
+          </div>
+        <div class="form-group">
+            <i class="fa fa-bookmark" aria-hidden="true"></i>
+          <label>IP del sensor</label>
+          <input type="text" class="form-control" name="ipRegistro" placeholder="Introduzca la dirección IP">
+        </div>
+        <button type="submit" class="btn btn-info"><b>Registrar</b></button>
+      </fieldset>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
+
+
+

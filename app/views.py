@@ -49,9 +49,6 @@ def registro():
     if request.method == "GET":
         return render_template("admin/registroframe.html")
     else:
-            import time
-            ts=time.time()
-            print(time.ctime(ts))
             nombre = request.form["nombreRegistro"]
             email = request.form["emailRegistro"]
             perfil = request.form["perfilRegistro"]
@@ -76,8 +73,20 @@ def registro():
             cur.execute(consulta, [email])
             row = cur.fetchone()
             if row == None:
-                 cur.execute('INSERT INTO usuarios (nombre, email, perfil, password) VALUES (%s,%s,%s,%s)', (nombre, email, perfil,password_encriptada))
-                 mysql.get_db().commit()
+                cur.execute('INSERT INTO usuarios (nombre, email, perfil, password) VALUES (%s,%s,%s,%s)', (nombre, email, perfil,password_encriptada))
+                 
+                consulta2= 'SELECT idactions FROM actions WHERE title LIKE "%registro%"' 
+                cur.execute(consulta2)
+                act=cur.fetchone()
+
+                consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+                cur.execute(consulta3, [email])
+                id = cur.fetchone()
+                
+                cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+                mysql.get_db().commit()
+                cur.close()
+                
             else:
                 flash("Ya existe un usuario con dicho correo electrónico")
                 return redirect(url_for("registro"))
@@ -89,10 +98,6 @@ def login():
     if request.method == "GET":
           return render_template("login.html")
     else:
-        import time
-        ts=time.time()
-        tord=time.ctime(ts)
-        print(tord)
         email = request.form["emailLogin"] 
         password = request.form["passwordLogin"]
         password_encode = password.encode("utf-8")
@@ -108,8 +113,6 @@ def login():
         consulta='SELECT iduser, nombre, email, perfil, password FROM usuarios where email =%s'
         cur.execute(consulta, [email])
         row = cur.fetchone()
-        
-        
 
         if (row != None):
             password_encriptada_encode = row[4].encode()
@@ -127,7 +130,7 @@ def login():
                 cur.execute(consulta3, [email])
                 id = cur.fetchone()
                 
-                cur.execute('INSERT INTO user_action (id_user, action) VALUES (%s,%s)', (id,act))
+                cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
                 mysql.get_db().commit()
                 cur.close()
                 return redirect(url_for("main"))
@@ -145,12 +148,15 @@ def usuarios_registrados():
     data = cur.fetchall()
     return render_template("admin/usuariosregistrados.html", contacts = data)
 
-@app.route('/delete/<string:email>')
-def delete_contact(email):
+@app.route('/delete/<int:iduser>')
+def delete_contact(iduser):
     cur = mysql.get_db().cursor()
-    consulta = ('DELETE FROM usuarios WHERE email = %s LIMIT 1')
-    cur.execute(consulta, [email])
+    consulta1 = ('DELETE FROM user_actions WHERE id_user= %s LIMIT 1')
+    consulta2 = ('DELETE FROM usuarios WHERE iduser = %s LIMIT 1')
+    cur.execute(consulta1, [iduser])
+    cur.execute(consulta2, [iduser])
     mysql.get_db().commit()
+    cur.close()
     flash('Usuario eliminado correctamente')
     return redirect(url_for("usuarios_registrados"))
 
@@ -188,11 +194,14 @@ def perfiles():
 @app.route('/acciones')
 def acciones():
     cur = mysql.get_db().cursor()
-    cur.execute('SELECT * FROM user_action')
-    data = cur.fetchall()
-    cur.execute('SELECT nombre,email FROM usuarios INNER JOIN user_action ON usuarios.iduser=user_action.id_user GROUP BY timestamp')
-    dato = cur.fetchall()
-    return render_template("admin/acciones.html", acciones= data, usuarios = dato)
+    cur.execute('SELECT fm.nombre, fm.email, f.timestamp, f.action FROM user_actions AS f JOIN usuarios AS fm ON fm.iduser=f.id_user GROUP BY f.timestamp ORDER BY f.timestamp DESC')
+    datos = cur.fetchall()
+    #cur.execute('SELECT action,timestamp FROM user_actions')
+    #data = cur.fetchall()
+    #cur.execute('SELECT nombre,email FROM usuarios INNER JOIN user_actions ON usuarios.iduser=user_actions.id_user GROUP BY timestamp')
+    #dato = cur.fetchall()
+    return render_template("admin/acciones.html", datos= datos)
+    #acciones= data, usuarios = dato)
 
 #-------------------------------------------GESTIÓN-----------------------------------------------------------------
 #-----------------------SENSORES------------------------------------------------------------------------------------
@@ -224,6 +233,98 @@ def sensoresRM():
         return render_template("admin/sensoresRM.html")
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRM.html")
+
+@app.route('/delete/sensor/<int:idsensores>')
+def delete_sensor(idsensores):
+    cur = mysql.get_db().cursor()
+    consulta = ('DELETE FROM sensores WHERE idsensores= %s LIMIT 1')
+    cur.execute(consulta, [idsensores])
+    mysql.get_db().commit()
+    flash('Sensor eliminado correctamente')
+    return redirect(url_for("sensores"))
+
+@app.route('/edit/sensor/<int:idsensores>')
+def get_sensor(idsensores):
+    cursor = mysql.get_db().cursor()
+    consulta= ('SELECT * FROM sensores WHERE idsensores= %s')
+    cursor.execute(consulta, [idsensores])
+    sensor= cursor.fetchall()
+    return render_template('admin/sensoreseditados.html', sensores = sensor[0])
+
+@app.route('/update/sensores/<int:idsensores>',methods= ['POST'])
+def update_sensor(idsensores):
+    if request.method == 'POST':
+        nombre = request.form['nombreActualizado']
+        tipo = request.form['tipoActualizado'] 
+        mac= request.form['macActualizada']
+        ip= request.form['ipActualizada']
+    
+        cursor = mysql.get_db().cursor()
+        cursor.execute( """
+            UPDATE sensores
+            SET nombre= '{1}',
+                tipo = '{2}',
+                mac = '{3}',
+                ip = '{4}'
+            WHERE idsensores = '{0}'"""
+            .format(idsensores,nombre,tipo,mac,ip))
+        mysql.get_db().commit() 
+        flash("Sensor actualizado satisfactoriamente")
+        return redirect(url_for('sensores'))
+@app.route('/registrosensores', methods = ["GET", "POST"])
+def registrosensores():
+    if request.method == "GET":
+        return render_template("admin/registrarsensor.html")
+    else:
+            nombre = request.form["nombreSensor"]
+            tipo = request.form["tipoRegistro"]
+            mac = request.form["macRegistro"]
+            ip = request.form["ipRegistro"]
+            if nombre == "":
+                flash("Debe indicar un nombre")
+                return redirect (url_for("registrosensores"))
+            if tipo == "Noseleccionado":
+                flash("Debe indicar el tipo del sensor")
+                return redirect (url_for("registrosensores"))
+            if mac == "":
+                flash("Debe indicar una dirección MAC")
+                return redirect (url_for("registrosensores")) 
+                    
+            
+            cur = mysql.get_db().cursor()
+            consulta='SELECT  idsensores, nombre, tipo, mac, ip FROM sensores WHERE mac=%s'
+            cur.execute(consulta, [mac])
+            row = cur.fetchone()
+            if row == None:
+                cur.execute('INSERT INTO sensores (nombre, tipo, mac, ip) VALUES (%s,%s,%s,%s)', (nombre, tipo, mac,ip))
+                mysql.get_db().commit()
+                cur.close()
+                
+            else:
+                flash("El sensor introducido ya existe")
+                return redirect(url_for("registrosensores"))
+    
+    return redirect(url_for('sensores')) 
+
+@app.route('/sensores')
+def sensores():
+    cur = mysql.get_db().cursor()
+    cur.execute('SELECT * FROM sensores')
+    sensores = cur.fetchall()
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/sensores.html", sensores= sensores )
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensores.html", sensores= sensores)
+
+@app.route('/consolaPandora')
+def consolaPandora():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/consolaPandora.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/consolaPandora.html")
+
 #-----------------------SUBSISTEMAS------------------------------------------------------------------------------------
 @app.route('/subsistemaBD')
 def subsistemaBD():
@@ -232,9 +333,40 @@ def subsistemaBD():
         return render_template("admin/subsistemaBD.html")
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaBD.html")
+@app.route('/subsistemaAA')
+def subsistemaAA():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaAA.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaAA.html")
+@app.route('/subsistemaCM')
+def subsistemaCM():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaACM.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaCM.html")
+
+@app.route('/subsistemaO')
+def subsistemaO():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaO.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaO.html")
+@app.route('/subsistemaC')
+def subsistemaC():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaC.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaC.html")
+
 @app.route('/grupos')
 def grupos():
     grupo = {os.getenv("GRUPO_WIFI")}
+    print(type(grupo))
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
         return render_template("admin/grupo.html", grupo=grupo)

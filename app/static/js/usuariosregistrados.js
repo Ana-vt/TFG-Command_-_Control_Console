@@ -1,4 +1,4 @@
-const btnDelete = document.querySelectorAll('.btn-delete')
+const btnDelete = document.querySelectorAll('.btn-danger')
 
 if (btnDelete){
     const btnArray = Array.from(btnDelete);

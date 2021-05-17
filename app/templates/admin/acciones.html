@@ -21,16 +21,19 @@
         </tr>
     </thead>
     <tbody>
-        {% for a in acciones %}
-        {% for u in usuarios %}
+        {% for d in datos %}
         <tr>
-          <td>{{u.0}}</td>
-          <td>{{u.1}}</td>
-          <td>{{a.2}}</td>
-          <td>{{a.1}}</td>
+          <td>{{d.0}}</td>
+          <td>{{d.1}}</td>
+          <td>{{d.2}}</td>
+          {% if d.3 == 3 %}
+          <td>Se ha iniciado sesión</td>
+          {% elif d.3 == 2 %}
+          <td>El administrador ha registrado a {{d.0}}</td>
+          {% endif %}
         </tr>
         {% endfor %}
-        {% endfor %}
+        
         
       </tbody>
 </table>

@@ -1,0 +1,59 @@
+{% extends "noadmin/templates/layoutna.html" %}
+{% block css %} 
+    <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+{% endblock %}
+
+{% block title %}
+    <h1 class="font-weight-bold">Inventario de sensores</h1>
+    <p class="lead text-muted">Aquí puede obtener información de los sensores registrados en PLICA</p>
+{% endblock %}
+                        
+{% block main %}
+<table class="table table-striped table-bordered bg-white">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>MAC</th>
+            <th>IP</th>
+            <th>Acciones</th>
+
+
+        </tr>
+    </thead>
+    <tbody><!--Si hay mensajes (de flash) muéstralo en pantalla-->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+            <!--<div class="alert alert-danger alert-dismissible fade show" role="alert">-->
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span>{{ message }}</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                </div>
+           <!-- </div>-->
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% for s in sensores %}
+        <tr>
+            <td>{{ s.1}}</td>
+            <td>{{ s.2}}</td>
+            <td>{{ s.3}}</td>
+            <td>{{ s.4}}</td>
+            <td> 
+                <a href="/edit/sensor/{{s.0}}" class="btn btn-outline-dark"><i class="fa fa-user-edit mr-2"></i>Editar</a>
+                <a href="/delete/sensor/{{s.0}}" class="btn btn-outline-dark btn-delete"><i class="fa fa-user-minus mr-2"></i>Eliminar</a>
+            </td>
+                
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
