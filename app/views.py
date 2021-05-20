@@ -500,5 +500,26 @@ def claves():
 
 @app.route('/envio')
 def envio():
-    subprocess.call(["scp", "root@192.168.1.159:/root", "localpath"])
-    print (open("localpath").read())
+    #Genero llaves con un random
+    random_generator = Crypto.Random.new().read
+    private_key = RSA.generate(1024, random_generator)
+    public_key = private_key.publickey()
+    #Exporto las llaves para convertirlas a utf-8
+    private_key=private_key.export_key(format='PEM')
+    public_key=public_key.export_key(format='PEM')
+
+    file_out = open("private.pem", "wb")
+    file_out.write(private_key)
+    file_out.close()
+    file_out = open("public.pem", "wb")
+    file_out.write(public_key)
+    file_out.close()
+    try:
+        connUser='root'
+        connHost='192.168.1.159'
+        connPath="/root"
+        scp = subprocess.Popen(["scp", "public.pem", "{}@{}:{}".format(connUser, connHost, connPath)])
+        #print (open("localpath").read())
+    except subprocess.CalledProcessError:
+        print('ERROR: Connection to host failed!')
+    return('hola')
