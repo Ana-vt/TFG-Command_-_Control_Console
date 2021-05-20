@@ -7,6 +7,11 @@ import time
 from dotenv import load_dotenv
 load_dotenv
 import os
+import Crypto
+import binascii
+from Crypto.PublicKey import RSA 
+from Crypto.Cipher import PKCS1_OAEP #genera objeto cipher que permite cifrar
+import subprocess
 salt = bcrypt.gensalt()
 #------------------Inicializo BBDD------------------------
 #Config de la BBDD
@@ -450,3 +455,50 @@ def cookiejn():
     res.set_cookie("smell", "lemon")
     
     return res
+
+@app.route('/claves')
+def claves():
+    #Genero llaves con un random
+    random_generator = Crypto.Random.new().read
+    private_key = RSA.generate(1024, random_generator)
+    public_key = private_key.publickey()
+    #Exporto las llaves para convertirlas a utf-8
+    private_key=private_key.export_key(format='PEM')
+    public_key=public_key.export_key(format='PEM')
+
+    file_out = open("private.pem", "wb")
+    file_out.write(private_key)
+    file_out.close()
+    
+    file_out = open("public.pem", "wb")
+    file_out.write(public_key)
+    file_out.close()
+    #Convierto de binario a utf-8
+    #private_key= binascii.hexlify(private_key).decode('utf-8')
+    #public_key= binascii.hexlify(public_key).decode('utf-8') #la corta
+    #print(private_key)
+    
+    #------------------------------------------------------------------------
+
+    #CIFRO UN MENSAJE importando llaves y conviertiendo de utf-8 a binario
+    #private_key=RSA.import_key(binascii.unhexlify(private_key))
+    #public_key=RSA.import_key(binascii.unhexlify(public_key))
+
+    #message="Hola mundo"
+    #message=message.encode()
+    #cipher= PKCS1_OAEP.new(public_key)
+    #message_encrypted=cipher.encrypt(message)
+    #print(message_encrypted)
+
+    #cipher = PKCS1_OAEP.new(private_key)
+    #messagef = cipher.decrypt(message_encrypted)
+    #print(message)
+
+    #print(private_key)
+    #print(public_key)
+    return (private_key)
+
+@app.route('/envio')
+def envio():
+    subprocess.call(["scp", "root@192.168.1.159:/root", "localpath"])
+    print (open("localpath").read())
