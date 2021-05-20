@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Ovo&display=swap" rel="stylesheet">
+    <style type="text/css">
+      .bg-mix{
+        background: linear-gradient(180deg, #fff, #D4EBEC);
+      }
+      .bg-grey{
+        background-color: #D4EBEC;
+      }
+    </style>
     {% block css %}{% endblock %}
  
   </head>
@@ -182,7 +190,7 @@
               
                       </div>
                       <div class="col-lg-3 d-flex">
-                        <button class="btn btn-primary w-100 align-self-center">Ver novedades</button>
+                        <button class="btn btn-primary w-100 align-self-center" onclick="location.href='/index'"><b>Ver novedades</b></button>
                       </div>
 
                     </div>
@@ -190,6 +198,12 @@
                         {% block main %}{% endblock %}
                     </main>
                   </div>
+                </section>
+                <section class="bg-mix">
+                  {% block section %}{% endblock %}
+                </section>
+                <section class="bg-grey">
+                  {% block section2 %}{% endblock %}
                 </section>
               </div>
         </div>
@@ -203,7 +217,7 @@
         location.href = "/consolaPandora"
 
 	    });
-    </script>
+    </script>   
 
     <script>
         /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */

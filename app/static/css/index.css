@@ -16,7 +16,7 @@
   }
   
   a{
-    color:#D9D9D1;
+    color:#ACD7D7;
     
   }
   
@@ -33,6 +33,12 @@
     background-color: var(--light) !important;
   }
   
+  .bg-mix{
+    background: linear-gradient(180deg, #fff, #C7E1E2);
+  }
+  .bg-grey{
+    background-color: #A9C3C4;
+  }
   #sidebar-container{
     min-height: 100vh;
     
@@ -125,3 +131,6 @@
   .dropdown-item{
     margin-left: 0px;
   } */
+  .barra{
+    border-right: 1px solid var(--grey);
+  }

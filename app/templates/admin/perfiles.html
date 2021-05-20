@@ -17,6 +17,7 @@
         <th scope="col">Perfil</th>
         <th scope="col">Descripción</th>
         <th scope="col">Acciones</th>
+        <th scope="col">Usuarios</th>
       </tr>
     </thead>
     <tbody>
@@ -25,18 +26,96 @@
         <td>Administrador</td>
         <td>Un administrador tiene acceso a todas las secciones de la consola. Es el que gestiona los usuarios, pudiendo crearlos, editarlos o incluso eliminarlos.</td>
         <td>Gestionar usuarios</td>
+        <td>
+          <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  <i class="fa fa-eye"></i>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Lista de usuarios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Nombre de los usuarios que son de este perfil
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+        </td>
       </tr>
       <tr>
         <th scope="row">2</th>
         <td>Operador</td>
         <td>Un operador tendrá acceso limitado. No podrá gestionar usuarios, tan sólo su perfil propio. Puede consultar información pero no modificarla.</td>
         <td>Editar perfil Consultar datos</td>
+        <td>
+          <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+  <i class="fa fa-eye"></i>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Lista de usuarios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Nombre de los usuarios que son de este perfil
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+        </td>
+        
       </tr>
       <tr>
         <th scope="row">3</th>
         <td>Analista</td>
         <td>Un analista tendrá acceso limitado. No podrá gestionar usuarios, tan sólo su propio perfil. Puede realizar tareas de configuración sobre los subsistemas plica.</td>
         <td>Editar perfil Configurar datos</td>
+        <td>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            <i class="fa fa-eye"></i>
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Lista de usuarios</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Nombre de los usuarios que son de este perfil
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>

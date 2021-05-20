@@ -3,7 +3,7 @@ td, th, table{
 }
 th{
     text-align: center;
-    background-color:#F9CC54;
+    background-color:#E8E8D1;
     height: 30px;
 }
 td{
@@ -14,7 +14,7 @@ tr:nth-child(odd){
     background-color: lightgray;
 }
 tr:hover{
-    background-color: aquamarine;
+    background-color: #D4EBEC;
 }
 tr{
     background-color:#fff;

@@ -2,10 +2,10 @@
 .card-body{
     width:100%;
     padding:15px;
-    background-color: blueviolet;
+    background-color: #F3FEFE;
 }
 input[type="text"]{
-    font-size: 10px;
+    font-size: 15px;
     width:85%;
     padding:10px;
     
