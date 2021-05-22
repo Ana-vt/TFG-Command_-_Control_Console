@@ -30,6 +30,8 @@
           <td>Se ha iniciado sesión</td>
           {% elif d.3 == 2 %}
           <td>El administrador ha registrado a {{d.0}}</td>
+          {% elif d.3 == 1 %}
+          <td>Se ha conectado a Pandora</td>
           {% endif %}
         </tr>
         {% endfor %}

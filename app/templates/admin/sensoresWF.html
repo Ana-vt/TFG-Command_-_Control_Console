@@ -8,7 +8,8 @@
 {% endblock %}
                         
 {% block main %}
-<iframe id="sensores" src="http://192.168.1.154/pandora_console/index.php?sec=view&sec2=operation/agentes/estado_agente&group_id=17" sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups allow-modals allow-presentation allow-top-navigation-by-user-activation" width='1000' height='550' ></iframe>
+{% print(id1) %}
+<iframe id="sensores" src="http://192.168.1.163/pandora_console/index.php?sec=view&sec2=operation/agentes/estado_agente&group_id=$id1" sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups allow-modals allow-presentation allow-top-navigation-by-user-activation" width='1000' height='550' ></iframe>
 {% endblock %}
 
 {% block js %}

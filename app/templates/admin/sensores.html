@@ -18,6 +18,7 @@
             <tr>
                 <th>Nombre</th>
                 <th>Tipo</th>
+                <th>Descripción</th>
                 <th>MAC</th>
                 <th>IP</th>
                 <th>Acciones</th>
@@ -45,6 +46,11 @@
             <tr>
                 <td>{{ s.1}}</td>
                 <td>{{ s.2}}</td>
+                {% if s.5 == none %}
+                <td> </td>
+                {% else%}
+                <td>{{s.5}}</td>
+                {% endif %}
                 <td>{{ s.3}}</td>
                 <td>{{ s.4}}</td>
                 <td> 

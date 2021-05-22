@@ -4,8 +4,6 @@ from flaskext.mysql import MySQL
 #from flask_mysqldb import MySQL
 import bcrypt
 import time
-from dotenv import load_dotenv
-load_dotenv
 import os
 import Crypto
 import binascii
@@ -23,10 +21,6 @@ mysql = MySQL(app)
 
 #Cómo va protegida la sesión
 app.secret_key='mysecretkey'
-
-@app.route('/env')
-def env():
-    return f'Hello, {os.getenv("SECRET_VALUE")} the meaning of life is {os.getenv("MEANING_OF_LIFE")}'
 
 @app.route('/')
 def main():
@@ -58,8 +52,7 @@ def registro():
             email = request.form["emailRegistro"]
             perfil = request.form["perfilRegistro"]
             password = request.form["passwordRegistro"]
-            password_encode = password.encode("utf-8")
-            password_encriptada = bcrypt.hashpw(password_encode, salt)
+            passwordconf = request.form["passwordRegistroconfirmacion"]
             if nombre == "":
                 flash("Debe indicar su nombre")
                 return redirect (url_for("registro"))
@@ -72,32 +65,37 @@ def registro():
             if password == "":
                 flash("Debe indicar su contraseña")
                 return redirect (url_for("registro"))
+            if password == passwordconf:
+                password_encode = password.encode("utf-8")
+                password_encriptada = bcrypt.hashpw(password_encode, salt)                
             
-            cur = mysql.get_db().cursor()
-            consulta='SELECT  iduser, nombre, email, perfil, password FROM usuarios where email =%s'
-            cur.execute(consulta, [email])
-            row = cur.fetchone()
-            if row == None:
-                cur.execute('INSERT INTO usuarios (nombre, email, perfil, password) VALUES (%s,%s,%s,%s)', (nombre, email, perfil,password_encriptada))
+                cur = mysql.get_db().cursor()
+                consulta='SELECT  iduser, nombre, email, perfil, password FROM usuarios where email =%s'
+                cur.execute(consulta, [email])
+                row = cur.fetchone()
+                if row == None:
+                    cur.execute('INSERT INTO usuarios (nombre, email, perfil, password) VALUES (%s,%s,%s,%s)', (nombre, email, perfil,password_encriptada))
                  
-                consulta2= 'SELECT idactions FROM actions WHERE title LIKE "%registro%"' 
-                cur.execute(consulta2)
-                act=cur.fetchone()
+                    consulta2= 'SELECT idactions FROM actions WHERE title LIKE "%registro%"' 
+                    cur.execute(consulta2)
+                    act=cur.fetchone()
 
-                consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
-                cur.execute(consulta3, [email])
-                id = cur.fetchone()
-                
-                cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
-                mysql.get_db().commit()
-                cur.close()
-                
+                    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+                    cur.execute(consulta3, [email])
+                    id = cur.fetchone()
+                    
+                    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+                    mysql.get_db().commit()
+                    cur.close()
+                    
+                else:
+                    flash("Ya existe un usuario con dicho correo electrónico")
+                    return redirect(url_for("registro"))
             else:
-                flash("Ya existe un usuario con dicho correo electrónico")
+                flash("Las contraseñas no coinciden")
                 return redirect(url_for("registro"))
         
-        
-    return redirect(url_for('index')) #PORQUE SE REGISTRA DESDE DENTRO
+    return redirect(url_for('index')) 
 @app.route('/login', methods = ["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -194,48 +192,109 @@ def update_contact(email):
 
 @app.route('/perfiles')
 def perfiles():
-    return render_template("admin/perfiles.html")
+    cur = mysql.get_db().cursor()
+    cur.execute('SELECT * FROM usuarios WHERE perfil LIKE "%Administrador%"')
+    admin = cur.fetchall()
+    cur.execute('SELECT * FROM usuarios WHERE perfil LIKE "%Analista%"')
+    analista = cur.fetchall()   
+    cur.execute('SELECT * FROM usuarios WHERE perfil LIKE "%Operador%"')
+    operador = cur.fetchall()   
+    return render_template("admin/perfiles.html", p_admin=admin, p_analista=analista, p_operador=operador)
 
 @app.route('/acciones')
 def acciones():
     cur = mysql.get_db().cursor()
     cur.execute('SELECT fm.nombre, fm.email, f.timestamp, f.action FROM user_actions AS f JOIN usuarios AS fm ON fm.iduser=f.id_user GROUP BY f.timestamp ORDER BY f.timestamp DESC')
     datos = cur.fetchall()
-    #cur.execute('SELECT action,timestamp FROM user_actions')
-    #data = cur.fetchall()
-    #cur.execute('SELECT nombre,email FROM usuarios INNER JOIN user_actions ON usuarios.iduser=user_actions.id_user GROUP BY timestamp')
-    #dato = cur.fetchall()
     return render_template("admin/acciones.html", datos= datos)
-    #acciones= data, usuarios = dato)
 
 #-------------------------------------------GESTIÓN-----------------------------------------------------------------
 #-----------------------SENSORES------------------------------------------------------------------------------------
 @app.route('/sensoresWF')
 def sensoresWF():
+    variable_env1 = {os.getenv("GRUPO_WIFI")}
+    id_str = " ".join(variable_env1)
+    #id_str="17"
+    cur = mysql.get_db().cursor()
+    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    cur.execute(consulta)
+    act=cur.fetchone()
+
+    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    cur.execute(consulta3, session.get("email"))
+    id = cur.fetchone()
+                    
+    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+    mysql.get_db().commit()
+    cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresWF.html")
+        return render_template("admin/sensoresWF.html", id1=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresWF.html")
 @app.route('/sensoresBT')
 def sensoresBT():
+    variable_env2 = {os.getenv("GRUPO_BLUETOOTH")}
+    idstr = " ".join(variable_env2)
+    cur = mysql.get_db().cursor()
+    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    cur.execute(consulta)
+    act=cur.fetchone()
+
+    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    cur.execute(consulta3, session.get("email"))
+    id = cur.fetchone()
+                    
+    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+    mysql.get_db().commit()
+    cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresBT.html")
+        return render_template("admin/sensoresBT.html", id2=idstr)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresBT.html")
 @app.route('/sensoresRF')
 def sensoresRF():
+    variable_env3 = {os.getenv("GRUPO_RF")}
+    idstr = " ".join(variable_env3)
+    print(idstr)
+    cur = mysql.get_db().cursor()
+    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    cur.execute(consulta)
+    act=cur.fetchone()
+
+    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    cur.execute(consulta3, session.get("email"))
+    id = cur.fetchone()
+                    
+    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+    mysql.get_db().commit()
+    cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresRF.html")
+        return render_template("admin/sensoresRF.html", id3=idstr)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRF.html")
 @app.route('/sensoresRM')
 def sensoresRM():
+    variable_env4 = {os.getenv("GRUPO_RM")}
+    idstr = " ".join(variable_env4)
+    print(idstr)
+    cur = mysql.get_db().cursor()
+    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    cur.execute(consulta)
+    act=cur.fetchone()
+
+    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    cur.execute(consulta3, session.get("email"))
+    id = cur.fetchone()
+                    
+    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+    mysql.get_db().commit()
+    cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresRM.html")
+        return render_template("admin/sensoresRM.html", id4=idstr)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRM.html")
 
@@ -263,6 +322,7 @@ def update_sensor(idsensores):
         tipo = request.form['tipoActualizado'] 
         mac= request.form['macActualizada']
         ip= request.form['ipActualizada']
+        descripcion = request.form["descripcionActualizada"]
     
         cursor = mysql.get_db().cursor()
         cursor.execute( """
@@ -270,9 +330,10 @@ def update_sensor(idsensores):
             SET nombre= '{1}',
                 tipo = '{2}',
                 mac = '{3}',
-                ip = '{4}'
+                ip = '{4}',
+                descripcion = '{5}'
             WHERE idsensores = '{0}'"""
-            .format(idsensores,nombre,tipo,mac,ip))
+            .format(idsensores,nombre,tipo,mac,ip,descripcion))
         mysql.get_db().commit() 
         flash("Sensor actualizado satisfactoriamente")
         return redirect(url_for('sensores'))
@@ -285,6 +346,8 @@ def registrosensores():
             tipo = request.form["tipoRegistro"]
             mac = request.form["macRegistro"]
             ip = request.form["ipRegistro"]
+            descripcion = request.form["descripcionRegistro"]
+
             if nombre == "":
                 flash("Debe indicar un nombre")
                 return redirect (url_for("registrosensores"))
@@ -297,11 +360,11 @@ def registrosensores():
                     
             
             cur = mysql.get_db().cursor()
-            consulta='SELECT  idsensores, nombre, tipo, mac, ip FROM sensores WHERE mac=%s'
+            consulta='SELECT  idsensores, nombre, tipo, mac, ip, descripcion FROM sensores WHERE mac=%s'
             cur.execute(consulta, [mac])
             row = cur.fetchone()
             if row == None:
-                cur.execute('INSERT INTO sensores (nombre, tipo, mac, ip) VALUES (%s,%s,%s,%s)', (nombre, tipo, mac,ip))
+                cur.execute('INSERT INTO sensores (nombre, tipo, mac, ip, descripcion) VALUES (%s,%s,%s,%s,%s)', (nombre, tipo, mac,ip,descripcion))
                 mysql.get_db().commit()
                 cur.close()
                 
@@ -324,6 +387,18 @@ def sensores():
 
 @app.route('/consolaPandora')
 def consolaPandora():
+    cur = mysql.get_db().cursor()
+    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    cur.execute(consulta)
+    act=cur.fetchone()
+
+    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    cur.execute(consulta3, session.get("email"))
+    id = cur.fetchone()
+                    
+    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+    mysql.get_db().commit()
+    cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
         return render_template("admin/consolaPandora.html")
@@ -370,11 +445,13 @@ def subsistemaC():
 
 @app.route('/grupos')
 def grupos():
-    grupo = {os.getenv("GRUPO_WIFI")}
-    print(type(grupo))
+    #grupo = {os.getenv("GRUPO_WIFI")}
+    #grupo_str = " ".join(grupo)
+    #grupo="17"
+    #print(type(grupo_str))
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/grupo.html", grupo=grupo)
+        return render_template("admin/grupo.html")
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensores.html")
 
@@ -518,7 +595,7 @@ def envio():
         connUser='root'
         connHost='192.168.1.159'
         connPath="/root"
-        scp = subprocess.Popen(["scp", "public.pem", "{}@{}:{}".format(connUser, connHost, connPath)])
+        scp = subprocess.Popen(["scp", "private.pem", "{}@{}:{}".format(connUser, connHost, connPath)])
         #print (open("localpath").read())
     except subprocess.CalledProcessError:
         print('ERROR: Connection to host failed!')
