@@ -1,3 +1,4 @@
+from typing import Any
 from app import app
 from flask import Flask, render_template, url_for, request, redirect, flash, session, make_response
 from flaskext.mysql import MySQL
@@ -10,6 +11,7 @@ import binascii
 from Crypto.PublicKey import RSA 
 from Crypto.Cipher import PKCS1_OAEP #genera objeto cipher que permite cifrar
 import subprocess
+from flask.helpers import send_file
 salt = bcrypt.gensalt()
 #------------------Inicializo BBDD------------------------
 #Config de la BBDD
@@ -215,6 +217,7 @@ def sensoresWF():
     variable_env1 = {os.getenv("GRUPO_WIFI")}
     id_str = " ".join(variable_env1)
     #id_str="17"
+    print(id_str)
     cur = mysql.get_db().cursor()
     consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
     cur.execute(consulta)
@@ -229,7 +232,7 @@ def sensoresWF():
     cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresWF.html", id1=id_str)
+        return render_template("admin/sensoresWF.html", idwifi=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresWF.html")
 @app.route('/sensoresBT')
@@ -385,6 +388,7 @@ def sensores():
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensores.html", sensores= sensores)
 
+
 @app.route('/consolaPandora')
 def consolaPandora():
     cur = mysql.get_db().cursor()
@@ -415,45 +419,58 @@ def subsistemaBD():
         return render_template("noadmin/subsistemaBD.html")
 @app.route('/subsistemaAA')
 def subsistemaAA():
+    variable_env5 = {os.getenv("GRUPO_AA")}
+    id_str = " ".join(variable_env5)
+    print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaAA.html")
+        return render_template("admin/subsistemaAA.html", id5=id_str)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaAA.html")
+        return render_template("noadmin/subsistemaAA.html", id5=id_str)
 @app.route('/subsistemaCM')
 def subsistemaCM():
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaACM.html")
+        return render_template("admin/subsistemaCM.html")
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaCM.html")
-
+@app.route('/subsistemaGF')
+def subsistemaGF():
+    variable_env8 = {os.getenv("GRUPO_GF")}
+    id_str = " ".join(variable_env8)
+    print(id_str)
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaGF.html", id8=id_str)
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaGF.html", id8=id_str)
 @app.route('/subsistemaO')
 def subsistemaO():
+    variable_env6 = {os.getenv("GRUPO_O")}
+    id_str = " ".join(variable_env6)
+    print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaO.html")
+        return render_template("admin/subsistemaO.html", id6=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaO.html")
-@app.route('/subsistemaC')
-def subsistemaC():
+@app.route('/subsistemaCO')
+def subsistemaCO():
+    variable_env7 = {os.getenv("GRUPO_CO")}
+    id_str = " ".join(variable_env7)
+    print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaC.html")
+        return render_template("admin/subsistemaCO.html", id7=id_str )
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaC.html")
+        return render_template("noadmin/subsistemaCO.html")
 
-@app.route('/grupos')
-def grupos():
-    #grupo = {os.getenv("GRUPO_WIFI")}
-    #grupo_str = " ".join(grupo)
-    #grupo="17"
-    #print(type(grupo_str))
-    perfil = session.get('perfil')
-    if (perfil == 'Administrador'):
-        return render_template("admin/grupo.html")
-    elif(perfil != 'Administrador'):
-        return render_template("noadmin/sensores.html")
+@app.route('/subsistemaconfAA')
+def subsistemaconfAA():
+    return ("Hola")
+@app.route('/subsistemaconfBD')
+def subsistemaconfBD():
+    return render_template("admin/subsistemaconfBD.html")
 
 @app.route('/salir')
 def salir():
@@ -574,7 +591,7 @@ def claves():
     #print(private_key)
     #print(public_key)
     return (private_key)
-
+'''
 @app.route('/envio')
 def envio():
     #Genero llaves con un random
@@ -599,4 +616,50 @@ def envio():
         #print (open("localpath").read())
     except subprocess.CalledProcessError:
         print('ERROR: Connection to host failed!')
-    return('hola')
+    return('hola')'''
+@app.route('/pruebaclave')
+def pruebaclave():
+    #Genero llaves con un random
+    clave_random = Crypto.Random.new().read
+    private_key = RSA.generate(1024, clave_random)
+    public_key = private_key.publickey()
+    #Exporto las llaves para convertirlas a utf-8
+    private_key=private_key.export_key(format='PEM')
+    public_key=public_key.export_key(format='PEM')
+
+    file_out = open("id_rsa", "wb")
+    file_out.write(private_key)
+    file_out.close()
+    file_out = open("id_rsa.pub", "wb")
+    file_out.write(public_key)
+    file_out.close()
+    try:
+        connUser='root'
+        connHost='192.168.1.163'
+        connPath="root/.ssh"
+        scp = subprocess.Popen(["scp", "id_rsa", "{}@{}:{}".format(connUser, connHost, connPath)])
+        #print (open("localpath").read())
+    except subprocess.CalledProcessError:
+        print('ERROR: Connection to host failed!')
+    return("hola")
+
+@app.route('/clavessensores')
+def clavessensores():
+    path = "M:\proyecto\id_rsa.pub"
+    return send_file(path, as_attachment=True) 
+@app.route('/clavessubsistemas')
+def clavessubsistemas():
+    return render_template("admin/clavessubsistemas.html") 
+
+@app.route('/descargas')#novale
+def descargas():  
+    path = "M:\proyecto\public.pem"
+    try:
+        return send_file(path, as_attachment=True), redirect(url_for("clavessensores"))
+    except:
+        print("Error")
+    return("hello")
+@app.route('/sendkey')#novale
+def sendkey():  
+    path = "M:\proyecto\public.pem"
+    return send_file(path, as_attachment=True)
