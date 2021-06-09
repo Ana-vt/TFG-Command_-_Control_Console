@@ -1,0 +1,133 @@
+{% extends "templates/layout.html" %}
+{% block css %} 
+    <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+    <style type="text/css">
+        .bg{
+        background-image: url('../../static/images/conf.jpg');}
+        </style>
+{% endblock %}
+
+{% block title %}
+    <h1 class="font-weight-bold">Configuración del Subsistema de Aprendizaje Automático</h1>
+{% endblock %}
+                        
+{% block main %}
+<table class="table table-bordered table-striped bg">
+    <thead>
+      <tr>
+        <th scope="col">Sensor</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">WF</th>
+        <td>
+            <a class="btn btn-info" href="/subsistemaconfWFstart"><i class="fas fa-play-circle mr-2"></i>START WF</a>
+            <a class="btn btn-info" href="/subsistemaconfWFstop"><i class="fas fa-stop mr-2"></i>STOP WF</a>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">RM</th>
+        <td>
+            <a class="btn btn-info" href="/subsistemaconfRMstart"><i class="fas fa-play-circle mr-2"></i>START RM</a>
+            <a class="btn btn-info" href="/subsistemaconfRMstop"><i class="fas fa-stop mr-2"></i>STOP RM</a>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">RF</th>
+        <td>
+            <a class="btn btn-info" href="/subsistemaconfRFstart"><i class="fas fa-play-circle mr-2"></i>START RF</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfRFstop"><i class="fas fa-stop mr-2"></i>STOP RF</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">FW</th>
+        <td>
+            <a class="btn btn-info" href="/subsistemaconfFWstart"><i class="fas fa-play-circle mr-2"></i>START FW</a>
+            <a class="btn btn-info" href="/subsistemaconfFWstop"><i class="fas fa-stop mr-2"></i>STOP FW</a>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">BT</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfBTstart"><i class="fas fa-play-circle mr-2"></i>START BT</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfBTstop"><i class="fas fa-stop mr-2"></i>STOP BT</a>
+        </td>
+      </tr>          
+      <tr>
+        <th scope="row">TIDS</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfTIDSstart"><i class="fas fa-play-circle mr-2"></i>START TIDS</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfTIDSstop"><i class="fas fa-stop mr-2"></i>STOP TIDS</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA total</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBAstart"><i class="fas fa-play-circle mr-2"></i>START total UBA</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBAstop"><i class="fas fa-stop mr-2"></i>STOP total UBA</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA1</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA1start"><i class="fas fa-play-circle mr-2"></i>START UBA1</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA1stop"><i class="fas fa-stop mr-2"></i>STOP UBA1</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA2</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA2start"><i class="fas fa-play-circle mr-2"></i>START UBA2</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA2stop"><i class="fas fa-stop mr-2"></i>STOP UBA2</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA3</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA3start"><i class="fas fa-play-circle mr-2"></i>START UBA3</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA3stop"><i class="fas fa-stop mr-2"></i>STOP UBA3</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA4</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA4start"><i class="fas fa-play-circle mr-2"></i>START UBA4</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA4stop"><i class="fas fa-stop mr-2"></i>STOP UBA4</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA5</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA5start"><i class="fas fa-play-circle mr-2"></i>START UBA5</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA5stop"><i class="fas fa-stop mr-2"></i>STOP UBA5</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA6</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA6start"><i class="fas fa-play-circle mr-2"></i>START UBA6</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA6stop"><i class="fas fa-stop mr-2"></i>STOP UBA6</a>
+        </td>
+      </tr> 
+      <tr>
+        <th scope="row">UBA7</th>
+        <td>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA7start"><i class="fas fa-play-circle mr-2"></i>START UBA7</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfUBA7stop"><i class="fas fa-stop mr-2"></i>STOP UBA7</a>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+<div class="card" style="width: 50rem; margin-top: 5px;">
+    <div class="card-body"></div>
+
+        
+        
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}

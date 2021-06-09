@@ -8,6 +8,7 @@ import time
 import os
 import Crypto
 import binascii
+import paramiko #automatizar tareas con SSH
 from Crypto.PublicKey import RSA 
 from Crypto.Cipher import PKCS1_OAEP #genera objeto cipher que permite cifrar
 import subprocess
@@ -412,9 +413,13 @@ def consolaPandora():
 #-----------------------SUBSISTEMAS------------------------------------------------------------------------------------
 @app.route('/subsistemaBD')
 def subsistemaBD():
+    variable_env9 = {os.getenv("GRUPO_GF")}
+    id_str = " ".join(variable_env9)
+    print(id_str)
+    perfil = session.get('perfil')
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaBD.html")
+        return render_template("admin/subsistemaBD.html", id9=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaBD.html")
 @app.route('/subsistemaAA')
@@ -464,49 +469,106 @@ def subsistemaCO():
         return render_template("admin/subsistemaCO.html", id7=id_str )
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaCO.html")
-
+#-------------------------------------------GONFIGURACIÓN SUBSISTEMAS-----------------------------------------------------------------
+@app.route('/conf')#no vale, pruebo que ssh funciona con el servidor de Pandora con el comando ls
+def conf():
+    server='192.168.1.163'
+    username='root'
+    password='!plica1234'
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(server, username=username, password=password) 
+    stdin, stdout, stderr = client.exec_command('ls')
+    result= stdout.read().decode()
+    print(result)
+    return ("Hola")
+@app.route('/config')#no vale, pruebo que ssh funciona con el comando de correlación dado
+def config():
+    server='192.168.1.163'
+    username='root'
+    password='!plica1234'
+    #keyfile = "M:\proyecto\id_rsa"
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    #client.load_host_keys('M:\proyecto')
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy()) #para claves ssh desconocidas
+    client.connect(server, username=username, password=password) #lookforkeys busca archivos de clave privada en ssh
+    stdin, stdout, stderr = client.exec_command('ssh vagrant@172.20.0.11 /home/vagrant/kafka/bin/zookeeper-server-start.sh /home/vagrant/kafka/config/zookeeper.properties')
+    result= stdout.read().decode()
+    return ("config")
 @app.route('/subsistemaconfAA')
 def subsistemaconfAA():
-    return ("Hola")
-@app.route('/subsistemaconfBD')
-def subsistemaconfBD():
-    return render_template("admin/subsistemaconfBD.html")
+    return render_template("admin/subsistemaconfAA.html")
+@app.route('/subsistemaconfWFstart')
+def subsistemaconfWFstartrt():
+    return ("")
+@app.route('/subsistemaconfWFstop')
+def subsistemaconfWFstop():
+    return ("")
+@app.route('/subsistemaconfRMstart')
+def subsistemaconfRMstart():
+    return ("")
+@app.route('/subsistemaconfRMstop')
+def subsistemaconfRMstop():
+    return ("")
+@app.route('/subsistemaconfRFstart')
+def subsistemaconfRFstart():
+    return ("")
+@app.route('/subsistemaconfRFstop')
+def subsistemaconfRFstop():
+    return ("")
+@app.route('/subsistemaconfFWstart')
+def subsistemaconfFWstart():
+    return ("")
+@app.route('/subsistemaconfFWstop')
+def subsistemaconfFWstop():
+    return ("")
+@app.route('/subsistemaconfBTstart')
+def subsistemaconfBTstart():
+    return ("")
+@app.route('/subsistemaconfBTstop')
+def subsistemaconfBTstop():
+    return ("")
+@app.route('/subsistemaconfTIDSstart')
+def subsistemaconfTIDSstart():
+    return ("")
+@app.route('/subsistemaconfTIDSstop')
+def subsistemaconfTIDSstop():
+    return ("")
+@app.route('/subsistemaconfGF')
+def subsistemaconfGF():
+    return render_template("admin/subsistemaconfGF.html")
+@app.route('/subsistemaconfO')
+def subsistemaconfO():
+    return render_template("admin/subsistemaconfO.html")
+@app.route('/subsistemaconfOstart')
+def subsistemaconfOstart():
+    return ("")
+@app.route('/subsistemaconfOstop')
+def subsistemaconfOstop():
+    return ("")
+@app.route('/subsistemaconfFUstart')
+def subsistemaconfFUstart():
+    return ("")
+@app.route('/subsistemaconfOstart')
+def subsistemaconfFUstop():
+    return ("")
+@app.route('/subsistemaconfCO')
+def subsistemaconfCO():
+    return render_template("admin/subsistemaconfCO.html")
+@app.route('/subsistemaconfCOstart')
+def subsistemaconfCOstart():
+    return ("")
+@app.route('/subsistemaconfCOstop')
+def subsistemaconfCOstop():
+    return ("")
 
 @app.route('/salir')
 def salir():
     session.clear()
     return redirect(url_for("main"))
-
-@app.route('/helloworld')
-def hello_world():
-    resp = make_response(render_template("admin/sensores.html"))
-    # Set a same-site cookie for first-party contexts
-    resp.set_cookie('cookie1', 'value1', samesite='None')
-    # Ensure you use "add" to not overwrite existing cookie headers
-    # Set a cross-site cookie for third-party contexts
-    resp.headers.add('Set-Cookie','cookie2=value2; SameSite=None; Secure') #nombre=valor
-    return resp
-@app.route('/cookie')
-def cookie():
-    resp = make_response(render_template('admin/sensores.html'))
-    resp.set_cookie('somecookiename', 'I am cookie')
-    resp.set_cookie(
-        "somecookiename",
-        value= "I am a cookie",
-        max_age=25630,
-        expires=None,
-        path = request.path,
-        domain= ".app.localhost", #dominio que puede leer la cookie
-        secure= False,
-        httponly=False, #el pone false
-        samesite= None
-        )
-    return resp
-@app.route('/get-cookie/')
-def get_cookie():
-    username = request.cookies.get('somecookiename')
-    return username
-@app.route('/time')
+#-------------------------------------------tiempo(novale)-----------------------------------------------------------------
+@app.route('/time')#novale
 def time():
     import time
     from datetime import datetime
@@ -524,32 +586,7 @@ def time():
 
     print("tiempo de duración =", end_time-start_time)
     return "hola"
-
-@app.route('/cookiejn')
-def cookiejn():
-    res = make_response("Cookies" , 200)
-    cookies = request.cookies
-    flavor = cookies.get("flavor")
-    choctype = cookies.get("chocolate type")
-    smel = cookies.get("smell")
-    print(flavor, smel, choctype)
-    
-    res.set_cookie(
-        "flavor",
-        value= "chocolate chip",
-        max_age=10,
-        expires=None,
-        path=request.path,
-        domain=None, #dominio que puede leer la cookie
-        secure= False,
-        httponly=False, #el pone false
-        samesite= None
-        )
-    res.set_cookie("chocolate type", "milka")
-    res.set_cookie("smell", "lemon")
-    
-    return res
-
+#-------------------------------------------CLAVES-----------------------------------------------------------------
 @app.route('/claves')
 def claves():
     #Genero llaves con un random
@@ -659,7 +696,3 @@ def descargas():
     except:
         print("Error")
     return("hello")
-@app.route('/sendkey')#novale
-def sendkey():  
-    path = "M:\proyecto\public.pem"
-    return send_file(path, as_attachment=True)

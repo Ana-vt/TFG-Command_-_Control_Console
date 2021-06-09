@@ -1,0 +1,39 @@
+{% extends "templates/layout.html" %}
+{% block css %} 
+    <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+    <style type="text/css">
+        .bg{
+        background-image: url('../../static/images/conf.jpg');}
+        </style>
+{% endblock %}
+
+{% block title %}
+    <h1 class="font-weight-bold">Configuración del Subsistema de Ontologías</h1>
+{% endblock %}
+                        
+{% block main %}
+<div class="card bg" style="width: 40rem; margin-top: 5px;">
+    <div class="card-body">
+      <h5 class="card-title"><b><u>Subsistema Ontologías</u></b></h5>
+      <h6 class="card-subtitle mb-2 text-muted">Configuraciones:</h6>
+      <p class="card-text">
+        <ul>
+            <li>Permitirá iniciar la ontología o detenerla.</li>
+            <li>Permitirá iniciar Fuseki o detenerlo.</li>
+          </ul>
+
+        </p>
+        <div class="row">
+            <a class="btn btn-info mr-2" href="/subsistemaconfOstart"><i class="fas fa-play-circle mr-2"></i>START ONTOLOGÍA</a>
+            <a class="btn btn-info" href="/subsistemaconfOstop"><i class="fas fa-stop mr-2"></i>STOP ONTOLOGÍA</a>
+        </div>
+        <div class="row">
+            <a class="btn btn-info mr-2 mt-2" href="/subsistemaconfFUstart"><i class="fas fa-play-circle mr-2"></i>START FUSEKI</a>
+            <a class="btn btn-info mt-2" href="/subsistemaconfFUstop"><i class="fas fa-stop mr-2"></i>STOP FUSEKI</a> 
+        </div>
+      
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}

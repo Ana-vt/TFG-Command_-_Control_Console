@@ -1,0 +1,28 @@
+{% extends "templates/layout.html" %}
+{% block css %} 
+    <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+    <style type="text/css">
+        .bg{
+        background-image: url('../../static/images/conf.jpg');}
+        </style>
+{% endblock %}
+
+{% block title %}
+    <h1 class="font-weight-bold">Configuración del Subsistema de Correlación</h1>
+{% endblock %}
+                        
+{% block main %}
+<div class="card bg" style="width: 40rem; margin-top: 5px;">
+    <div class="card-body">
+      <h5 class="card-title"><b><u>Subsistema Correlación</u></b></h5>
+      <h6 class="card-subtitle mb-2 text-muted">Configuraciones:</h6>
+      <p class="card-text">
+          Permitirá iniciar la correlación o detenerla.
+        </p>
+        <a class="btn btn-info" href="/subsistemaconfCOstart"><i class="fas fa-play-circle mr-2"></i>START</a>
+        <a class="btn btn-info" href="/subsistemaconfCOstop"><i class="fas fa-stop mr-2"></i>STOP</a>
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
