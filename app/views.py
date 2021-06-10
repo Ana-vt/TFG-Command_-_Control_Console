@@ -482,17 +482,29 @@ def conf():
     result= stdout.read().decode()
     print(result)
     return ("Hola")
-@app.route('/config')#no vale, pruebo que ssh funciona con el comando de correlación dado
-def config():
+@app.route('/con')#no vale, pruebo ssh con clave
+def con():
     server='192.168.1.163'
     username='root'
-    password='!plica1234'
-    #keyfile = "M:\proyecto\id_rsa"
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())#los host de confianza se agragan automaticamente
+    k=paramiko.RSAKey.from_private_key_file('id_rsa') #crea un objeto clave leyendo el fichero que contiene la clave
+    client.connect(server, username=username, pkey= k) 
+    stdin, stdout, stderr = client.exec_command('ls')
+    result= stdout.read().decode()
+    print(result)
+    return ("Hola")
+@app.route('/config')#no vale, pruebo que ssh funciona con el comando de correlación dado
+def config():
+    server='192.168.1.163' #no sé cual es
+    username='root' #supongo que es vagrant
+    #pk='M:\proyecto\id_rsa.pub' 
+    keyfile = "M:\proyecto\id_rsa"
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     #client.load_host_keys('M:\proyecto')
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy()) #para claves ssh desconocidas
-    client.connect(server, username=username, password=password) #lookforkeys busca archivos de clave privada en ssh
+    client.connect(server, username=username, key_filename=keyfile) #lookforkeys busca archivos de clave privada en ssh
     stdin, stdout, stderr = client.exec_command('ssh vagrant@172.20.0.11 /home/vagrant/kafka/bin/zookeeper-server-start.sh /home/vagrant/kafka/config/zookeeper.properties')
     result= stdout.read().decode()
     return ("config")
@@ -696,3 +708,43 @@ def descargas():
     except:
         print("Error")
     return("hello")
+@app.route('/clavesssh')
+def clavesssh():
+    random_generator = Crypto.Random.new().read
+    private_key = RSA.generate(2048, random_generator)
+    public_key = private_key.publickey()
+    #Exporto las llaves para convertirlas a utf-8
+    private_key=private_key.export_key(format='PEM')
+    public_key=public_key.export_key(format='PEM')
+
+    file_out = open(".ssh/id_rsa", "wb")
+    file_out.write(private_key)
+    file_out.close()
+    
+    file_out = open(".ssh/id_rsa.pub", "wb")
+    file_out.write(public_key)
+    file_out.close()
+    return("")
+@app.route('/envioclavessh')
+def envioclavessh():
+    try:
+        connUser='root'
+        connHost='192.168.1.163'
+        connPath="root/.ssh/authorized_keys"
+        scp = subprocess.Popen(["scp", ".ssh/id_rsa.pub", "{}@{}:{}".format(connUser, connHost, connPath)])
+        #print (open("localpath").read())
+    except subprocess.CalledProcessError:
+        print('ERROR: Connection to host failed!')
+    return("")
+@app.route('/a')
+def a():
+    server='192.168.1.163'
+    username='root'
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    #pkey=paramiko.RSAKey.from_private_key_file(".ssh/id_rsassh")
+    client.connect(server, username=username)
+    stdin, stdout, stderr = client.exec_command('ls')
+    result= stdout.read().decode()
+    print(result)
+    return ("Hola")
