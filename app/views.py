@@ -2,28 +2,33 @@ from typing import Any
 from app import app
 from flask import Flask, render_template, url_for, request, redirect, flash, session, make_response
 from flaskext.mysql import MySQL
-#from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
 import bcrypt
-import time
 import os
 import Crypto
-import binascii
-import paramiko #automatizar tareas con SSH
-from Crypto.PublicKey import RSA 
-from Crypto.Cipher import PKCS1_OAEP #genera objeto cipher que permite cifrar
+import paramiko  # automatizar tareas con SSH
+from Crypto.PublicKey import RSA
 import subprocess
 from flask.helpers import send_file
-salt = bcrypt.gensalt()
-#------------------Inicializo BBDD------------------------
-#Config de la BBDD
+
+# ------------------Inicializo BBDD------------------------
+# Config de la BBDD
 app.config['MYSQL_DATABASE_HOST'] = '127.0.0.1'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'Mysql1234'
 app.config['MYSQL_DATABASE_DB'] = 'flask_usuarios'
 mysql = MySQL(app)
 
-#Cómo va protegida la sesión
-app.secret_key='mysecretkey'
+# Cómo va protegida la sesión
+app.secret_key = 'mysecretkey'
+
+# Encrypt config
+salt = bcrypt.gensalt()
+
+# PANDORA CONFIG
+PANDORA_HOST = '192.168.1.180'
+PANDORA_USER = 'root'
+
 
 @app.route('/')
 def main():
@@ -36,6 +41,7 @@ def main():
     else:
         return render_template("login.html")
 
+
 @app.route('/index')
 def index():
     perfil = session.get('perfil')
@@ -44,115 +50,123 @@ def index():
     else:
         return render_template("noadmin/index.html")
 
-#------------------------------ADMINISTRACIÓN--------------------------------------------------------
+# ------------------------------ADMINISTRACIÓN--------------------------------------------------------
 
-@app.route('/registro', methods = ["GET", "POST"])
+
+@app.route('/registro', methods=["GET", "POST"])
 def registro():
     if request.method == "GET":
         return render_template("admin/registroframe.html")
     else:
-            nombre = request.form["nombreRegistro"]
-            email = request.form["emailRegistro"]
-            perfil = request.form["perfilRegistro"]
-            password = request.form["passwordRegistro"]
-            passwordconf = request.form["passwordRegistroconfirmacion"]
-            if nombre == "":
-                flash("Debe indicar su nombre")
-                return redirect (url_for("registro"))
-            if email == "":
-                flash("Debe indicar su correo electrónico")
-                return redirect (url_for("registro"))
-            if perfil == "Noseleccionado":
-                flash("Debe indicar su tipo de perfil")
-                return redirect (url_for("registro"))
-            if password == "":
-                flash("Debe indicar su contraseña")
-                return redirect (url_for("registro"))
-            if password == passwordconf:
-                password_encode = password.encode("utf-8")
-                password_encriptada = bcrypt.hashpw(password_encode, salt)                
-            
-                cur = mysql.get_db().cursor()
-                consulta='SELECT  iduser, nombre, email, perfil, password FROM usuarios where email =%s'
-                cur.execute(consulta, [email])
-                row = cur.fetchone()
-                if row == None:
-                    cur.execute('INSERT INTO usuarios (nombre, email, perfil, password) VALUES (%s,%s,%s,%s)', (nombre, email, perfil,password_encriptada))
-                 
-                    consulta2= 'SELECT idactions FROM actions WHERE title LIKE "%registro%"' 
-                    cur.execute(consulta2)
-                    act=cur.fetchone()
+        nombre = request.form["nombreRegistro"]
+        email = request.form["emailRegistro"]
+        perfil = request.form["perfilRegistro"]
+        password = request.form["passwordRegistro"]
+        passwordconf = request.form["passwordRegistroconfirmacion"]
+        if nombre == "":
+            flash("Debe indicar su nombre")
+            return redirect(url_for("registro"))
+        if email == "":
+            flash("Debe indicar su correo electrónico")
+            return redirect(url_for("registro"))
+        if perfil == "Noseleccionado":
+            flash("Debe indicar su tipo de perfil")
+            return redirect(url_for("registro"))
+        if password == "":
+            flash("Debe indicar su contraseña")
+            return redirect(url_for("registro"))
+        if password == passwordconf:
+            password_encode = password.encode("utf-8")
+            password_encriptada = bcrypt.hashpw(password_encode, salt)
 
-                    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
-                    cur.execute(consulta3, [email])
-                    id = cur.fetchone()
-                    
-                    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
-                    mysql.get_db().commit()
-                    cur.close()
-                    
-                else:
-                    flash("Ya existe un usuario con dicho correo electrónico")
-                    return redirect(url_for("registro"))
+            cur = mysql.get_db().cursor()
+            consulta = 'SELECT  iduser, nombre, email, perfil, password FROM usuarios where email =%s'
+            cur.execute(consulta, [email])
+            row = cur.fetchone()
+            if row == None:
+                cur.execute('INSERT INTO usuarios (nombre, email, perfil, password) VALUES (%s,%s,%s,%s)',
+                            (nombre, email, perfil, password_encriptada))
+
+                consulta2 = 'SELECT idactions FROM actions WHERE title LIKE "%registro%"'
+                cur.execute(consulta2)
+                act = cur.fetchone()
+
+                consulta3 = 'SELECT iduser FROM usuarios WHERE email=%s'
+                cur.execute(consulta3, [email])
+                id = cur.fetchone()
+
+                cur.execute(
+                    'INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id, act))
+                mysql.get_db().commit()
+                cur.close()
+
             else:
-                flash("Las contraseñas no coinciden")
+                flash("Ya existe un usuario con dicho correo electrónico")
                 return redirect(url_for("registro"))
-        
-    return redirect(url_for('index')) 
-@app.route('/login', methods = ["GET", "POST"])
+        else:
+            flash("Las contraseñas no coinciden")
+            return redirect(url_for("registro"))
+
+    return redirect(url_for('index'))
+
+
+@app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-          return render_template("login.html")
+        return render_template("login.html")
     else:
-        email = request.form["emailLogin"] 
+        email = request.form["emailLogin"]
         password = request.form["passwordLogin"]
         password_encode = password.encode("utf-8")
 
         if email == "":
             flash("Debe indicar su correo electrónico")
-            return redirect (url_for("login"))
+            return redirect(url_for("login"))
         if password == "":
             flash("Debe indicar su contraseña")
-            return redirect (url_for("login"))
+            return redirect(url_for("login"))
 
         cur = mysql.get_db().cursor()
-        consulta='SELECT iduser, nombre, email, perfil, password FROM usuarios where email =%s'
+        consulta = 'SELECT iduser, nombre, email, perfil, password FROM usuarios where email =%s'
         cur.execute(consulta, [email])
         row = cur.fetchone()
 
         if (row != None):
             password_encriptada_encode = row[4].encode()
             if (bcrypt.checkpw(password_encode, password_encriptada_encode)):
-                session["id"]= row[0]
+                session["id"] = row[0]
                 session["nombre"] = row[1]
                 session["email"] = row[2]
                 session["perfil"] = row[3]
 
-                consulta2= 'SELECT idactions FROM actions WHERE title LIKE "%login%"' 
+                consulta2 = 'SELECT idactions FROM actions WHERE title LIKE "%login%"'
                 cur.execute(consulta2)
-                act=cur.fetchone()
+                act = cur.fetchone()
 
-                consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+                consulta3 = 'SELECT iduser FROM usuarios WHERE email=%s'
                 cur.execute(consulta3, [email])
                 id = cur.fetchone()
-                
-                cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+
+                cur.execute(
+                    'INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id, act))
                 mysql.get_db().commit()
                 cur.close()
                 return redirect(url_for("main"))
             else:
                 flash("Las credenciales introducidas son incorrectas")
                 return(render_template("login.html"))
-        if( row == None):
+        if(row == None):
             flash("Las credenciales introducidas son incorrectas")
             return (render_template("login.html"))
+
 
 @app.route('/usuarios_registrados')
 def usuarios_registrados():
     cur = mysql.get_db().cursor()
     cur.execute('SELECT * FROM usuarios')
     data = cur.fetchall()
-    return render_template("admin/usuariosregistrados.html", contacts = data)
+    return render_template("admin/usuariosregistrados.html", contacts=data)
+
 
 @app.route('/delete/<int:iduser>')
 def delete_contact(iduser):
@@ -166,32 +180,35 @@ def delete_contact(iduser):
     flash('Usuario eliminado correctamente')
     return redirect(url_for("usuarios_registrados"))
 
+
 @app.route('/edit/<string:email>')
 def get_contact(email):
     cursor = mysql.get_db().cursor()
-    consulta= ('SELECT * FROM usuarios WHERE email= %s')
+    consulta = ('SELECT * FROM usuarios WHERE email= %s')
     cursor.execute(consulta, [email])
-    data= cursor.fetchall()
-    return render_template('admin/usuarioseditados.html', contact = data[0])
+    data = cursor.fetchall()
+    return render_template('admin/usuarioseditados.html', contact=data[0])
 
-@app.route('/update/<string:email>',methods= ['POST'])
+
+@app.route('/update/<string:email>', methods=['POST'])
 def update_contact(email):
     if request.method == 'POST':
         nombre = request.form['nombreActualizado']
-        email = request.form['emailActualizado'] 
-        perfil= request.form['perfilActualizado']
-    
+        email = request.form['emailActualizado']
+        perfil = request.form['perfilActualizado']
+
         cursor = mysql.get_db().cursor()
-        cursor.execute( """
+        cursor.execute("""
             UPDATE usuarios
             SET nombre= '{0}',
                 email = '{1}',
                 perfil = '{2}'
             WHERE email = '{1}'"""
-            .format(nombre,email,perfil))
-        mysql.get_db().commit() 
+                       .format(nombre, email, perfil))
+        mysql.get_db().commit()
         flash("Contacto actualizado satisfactoriamente")
         return redirect(url_for('usuarios_registrados'))
+
 
 @app.route('/perfiles')
 def perfiles():
@@ -199,57 +216,64 @@ def perfiles():
     cur.execute('SELECT * FROM usuarios WHERE perfil LIKE "%Administrador%"')
     admin = cur.fetchall()
     cur.execute('SELECT * FROM usuarios WHERE perfil LIKE "%Analista%"')
-    analista = cur.fetchall()   
+    analista = cur.fetchall()
     cur.execute('SELECT * FROM usuarios WHERE perfil LIKE "%Operador%"')
-    operador = cur.fetchall()   
+    operador = cur.fetchall()
     return render_template("admin/perfiles.html", p_admin=admin, p_analista=analista, p_operador=operador)
+
 
 @app.route('/acciones')
 def acciones():
     cur = mysql.get_db().cursor()
     cur.execute('SELECT fm.nombre, fm.email, f.timestamp, f.action FROM user_actions AS f JOIN usuarios AS fm ON fm.iduser=f.id_user GROUP BY f.timestamp ORDER BY f.timestamp DESC')
     datos = cur.fetchall()
-    return render_template("admin/acciones.html", datos= datos)
+    return render_template("admin/acciones.html", datos=datos)
 
-#-------------------------------------------GESTIÓN-----------------------------------------------------------------
-#-----------------------SENSORES------------------------------------------------------------------------------------
+# -------------------------------------------GESTIÓN-----------------------------------------------------------------
+# -----------------------SENSORES------------------------------------------------------------------------------------
+
+
 @app.route('/sensoresWF')
 def sensoresWF():
     variable_env1 = {os.getenv("GRUPO_WIFI")}
     id_str = " ".join(variable_env1)
-    #id_str="17"
+    # id_str="17"
     print(id_str)
     cur = mysql.get_db().cursor()
-    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    consulta = 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"'
     cur.execute(consulta)
-    act=cur.fetchone()
+    act = cur.fetchone()
 
-    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    consulta3 = 'SELECT iduser FROM usuarios WHERE email=%s'
     cur.execute(consulta3, session.get("email"))
     id = cur.fetchone()
-                    
-    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+
+    cur.execute(
+        'INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id, act))
     mysql.get_db().commit()
     cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresWF.html", idwifi=id_str)
+        return render_template("admin/sensoresWF.html", idwifi=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresWF.html")
+
+
 @app.route('/sensoresBT')
 def sensoresBT():
     variable_env2 = {os.getenv("GRUPO_BLUETOOTH")}
     idstr = " ".join(variable_env2)
     cur = mysql.get_db().cursor()
-    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    consulta = 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"'
     cur.execute(consulta)
-    act=cur.fetchone()
+    act = cur.fetchone()
 
-    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    consulta3 = 'SELECT iduser FROM usuarios WHERE email=%s'
     cur.execute(consulta3, session.get("email"))
     id = cur.fetchone()
-                    
-    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+
+    cur.execute(
+        'INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id, act))
     mysql.get_db().commit()
     cur.close()
     perfil = session.get('perfil')
@@ -257,21 +281,24 @@ def sensoresBT():
         return render_template("admin/sensoresBT.html", id2=idstr)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresBT.html")
+
+
 @app.route('/sensoresRF')
 def sensoresRF():
     variable_env3 = {os.getenv("GRUPO_RF")}
     idstr = " ".join(variable_env3)
     print(idstr)
     cur = mysql.get_db().cursor()
-    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    consulta = 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"'
     cur.execute(consulta)
-    act=cur.fetchone()
+    act = cur.fetchone()
 
-    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    consulta3 = 'SELECT iduser FROM usuarios WHERE email=%s'
     cur.execute(consulta3, session.get("email"))
     id = cur.fetchone()
-                    
-    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+
+    cur.execute(
+        'INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id, act))
     mysql.get_db().commit()
     cur.close()
     perfil = session.get('perfil')
@@ -279,21 +306,24 @@ def sensoresRF():
         return render_template("admin/sensoresRF.html", id3=idstr)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRF.html")
+
+
 @app.route('/sensoresRM')
 def sensoresRM():
     variable_env4 = {os.getenv("GRUPO_RM")}
     idstr = " ".join(variable_env4)
     print(idstr)
     cur = mysql.get_db().cursor()
-    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    consulta = 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"'
     cur.execute(consulta)
-    act=cur.fetchone()
+    act = cur.fetchone()
 
-    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    consulta3 = 'SELECT iduser FROM usuarios WHERE email=%s'
     cur.execute(consulta3, session.get("email"))
     id = cur.fetchone()
-                    
-    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+
+    cur.execute(
+        'INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id, act))
     mysql.get_db().commit()
     cur.close()
     perfil = session.get('perfil')
@@ -301,6 +331,7 @@ def sensoresRM():
         return render_template("admin/sensoresRM.html", id4=idstr)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRM.html")
+
 
 @app.route('/delete/sensor/<int:idsensores>')
 def delete_sensor(idsensores):
@@ -311,25 +342,27 @@ def delete_sensor(idsensores):
     flash('Sensor eliminado correctamente')
     return redirect(url_for("sensores"))
 
+
 @app.route('/edit/sensor/<int:idsensores>')
 def get_sensor(idsensores):
     cursor = mysql.get_db().cursor()
-    consulta= ('SELECT * FROM sensores WHERE idsensores= %s')
+    consulta = ('SELECT * FROM sensores WHERE idsensores= %s')
     cursor.execute(consulta, [idsensores])
-    sensor= cursor.fetchall()
-    return render_template('admin/sensoreseditados.html', sensores = sensor[0])
+    sensor = cursor.fetchall()
+    return render_template('admin/sensoreseditados.html', sensores=sensor[0])
 
-@app.route('/update/sensores/<int:idsensores>',methods= ['POST'])
+
+@app.route('/update/sensores/<int:idsensores>', methods=['POST'])
 def update_sensor(idsensores):
     if request.method == 'POST':
         nombre = request.form['nombreActualizado']
-        tipo = request.form['tipoActualizado'] 
-        mac= request.form['macActualizada']
-        ip= request.form['ipActualizada']
+        tipo = request.form['tipoActualizado']
+        mac = request.form['macActualizada']
+        ip = request.form['ipActualizada']
         descripcion = request.form["descripcionActualizada"]
-    
+
         cursor = mysql.get_db().cursor()
-        cursor.execute( """
+        cursor.execute("""
             UPDATE sensores
             SET nombre= '{1}',
                 tipo = '{2}',
@@ -337,46 +370,49 @@ def update_sensor(idsensores):
                 ip = '{4}',
                 descripcion = '{5}'
             WHERE idsensores = '{0}'"""
-            .format(idsensores,nombre,tipo,mac,ip,descripcion))
-        mysql.get_db().commit() 
+                       .format(idsensores, nombre, tipo, mac, ip, descripcion))
+        mysql.get_db().commit()
         flash("Sensor actualizado satisfactoriamente")
         return redirect(url_for('sensores'))
-@app.route('/registrosensores', methods = ["GET", "POST"])
+
+
+@app.route('/registrosensores', methods=["GET", "POST"])
 def registrosensores():
     if request.method == "GET":
         return render_template("admin/registrarsensor.html")
     else:
-            nombre = request.form["nombreSensor"]
-            tipo = request.form["tipoRegistro"]
-            mac = request.form["macRegistro"]
-            ip = request.form["ipRegistro"]
-            descripcion = request.form["descripcionRegistro"]
+        nombre = request.form["nombreSensor"]
+        tipo = request.form["tipoRegistro"]
+        mac = request.form["macRegistro"]
+        ip = request.form["ipRegistro"]
+        descripcion = request.form["descripcionRegistro"]
 
-            if nombre == "":
-                flash("Debe indicar un nombre")
-                return redirect (url_for("registrosensores"))
-            if tipo == "Noseleccionado":
-                flash("Debe indicar el tipo del sensor")
-                return redirect (url_for("registrosensores"))
-            if mac == "":
-                flash("Debe indicar una dirección MAC")
-                return redirect (url_for("registrosensores")) 
-                    
-            
-            cur = mysql.get_db().cursor()
-            consulta='SELECT  idsensores, nombre, tipo, mac, ip, descripcion FROM sensores WHERE mac=%s'
-            cur.execute(consulta, [mac])
-            row = cur.fetchone()
-            if row == None:
-                cur.execute('INSERT INTO sensores (nombre, tipo, mac, ip, descripcion) VALUES (%s,%s,%s,%s,%s)', (nombre, tipo, mac,ip,descripcion))
-                mysql.get_db().commit()
-                cur.close()
-                
-            else:
-                flash("El sensor introducido ya existe")
-                return redirect(url_for("registrosensores"))
-    
-    return redirect(url_for('sensores')) 
+        if nombre == "":
+            flash("Debe indicar un nombre")
+            return redirect(url_for("registrosensores"))
+        if tipo == "Noseleccionado":
+            flash("Debe indicar el tipo del sensor")
+            return redirect(url_for("registrosensores"))
+        if mac == "":
+            flash("Debe indicar una dirección MAC")
+            return redirect(url_for("registrosensores"))
+
+        cur = mysql.get_db().cursor()
+        consulta = 'SELECT  idsensores, nombre, tipo, mac, ip, descripcion FROM sensores WHERE mac=%s'
+        cur.execute(consulta, [mac])
+        row = cur.fetchone()
+        if row == None:
+            cur.execute('INSERT INTO sensores (nombre, tipo, mac, ip, descripcion) VALUES (%s,%s,%s,%s,%s)',
+                        (nombre, tipo, mac, ip, descripcion))
+            mysql.get_db().commit()
+            cur.close()
+
+        else:
+            flash("El sensor introducido ya existe")
+            return redirect(url_for("registrosensores"))
+
+    return redirect(url_for('sensores'))
+
 
 @app.route('/sensores')
 def sensores():
@@ -385,23 +421,24 @@ def sensores():
     sensores = cur.fetchall()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensores.html", sensores= sensores )
+        return render_template("admin/sensores.html", sensores=sensores)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/sensores.html", sensores= sensores)
+        return render_template("noadmin/sensores.html", sensores=sensores)
 
 
 @app.route('/consolaPandora')
 def consolaPandora():
     cur = mysql.get_db().cursor()
-    consulta= 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"' 
+    consulta = 'SELECT idactions FROM actions WHERE title LIKE "%pandora%"'
     cur.execute(consulta)
-    act=cur.fetchone()
+    act = cur.fetchone()
 
-    consulta3= 'SELECT iduser FROM usuarios WHERE email=%s'
+    consulta3 = 'SELECT iduser FROM usuarios WHERE email=%s'
     cur.execute(consulta3, session.get("email"))
     id = cur.fetchone()
-                    
-    cur.execute('INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id,act))
+
+    cur.execute(
+        'INSERT INTO user_actions (id_user, action) VALUES (%s,%s)', (id, act))
     mysql.get_db().commit()
     cur.close()
     perfil = session.get('perfil')
@@ -410,7 +447,9 @@ def consolaPandora():
     elif(perfil != 'Administrador'):
         return render_template("noadmin/consolaPandora.html")
 
-#-----------------------SUBSISTEMAS------------------------------------------------------------------------------------
+# -----------------------SUBSISTEMAS------------------------------------------------------------------------------------
+
+
 @app.route('/subsistemaBD')
 def subsistemaBD():
     variable_env9 = {os.getenv("GRUPO_GF")}
@@ -422,6 +461,8 @@ def subsistemaBD():
         return render_template("admin/subsistemaBD.html", id9=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaBD.html")
+
+
 @app.route('/subsistemaAA')
 def subsistemaAA():
     variable_env5 = {os.getenv("GRUPO_AA")}
@@ -432,6 +473,8 @@ def subsistemaAA():
         return render_template("admin/subsistemaAA.html", id5=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaAA.html", id5=id_str)
+
+
 @app.route('/subsistemaCM')
 def subsistemaCM():
     perfil = session.get('perfil')
@@ -439,6 +482,8 @@ def subsistemaCM():
         return render_template("admin/subsistemaCM.html")
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaCM.html")
+
+
 @app.route('/subsistemaGF')
 def subsistemaGF():
     variable_env8 = {os.getenv("GRUPO_GF")}
@@ -449,6 +494,8 @@ def subsistemaGF():
         return render_template("admin/subsistemaGF.html", id8=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaGF.html", id8=id_str)
+
+
 @app.route('/subsistemaO')
 def subsistemaO():
     variable_env6 = {os.getenv("GRUPO_O")}
@@ -459,6 +506,8 @@ def subsistemaO():
         return render_template("admin/subsistemaO.html", id6=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaO.html")
+
+
 @app.route('/subsistemaCO')
 def subsistemaCO():
     variable_env7 = {os.getenv("GRUPO_CO")}
@@ -466,285 +515,204 @@ def subsistemaCO():
     print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaCO.html", id7=id_str )
+        return render_template("admin/subsistemaCO.html", id7=id_str)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaCO.html")
-#-------------------------------------------GONFIGURACIÓN SUBSISTEMAS-----------------------------------------------------------------
-@app.route('/conf')#no vale, pruebo que ssh funciona con el servidor de Pandora con el comando ls
-def conf():
-    server='192.168.1.163'
-    username='root'
-    password='!plica1234'
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(server, username=username, password=password) 
-    stdin, stdout, stderr = client.exec_command('ls')
-    result= stdout.read().decode()
-    print(result)
-    return ("Hola")
-@app.route('/con')#no vale, pruebo ssh con clave
-def con():
-    server='192.168.1.163'
-    username='root'
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())#los host de confianza se agragan automaticamente
-    k=paramiko.RSAKey.from_private_key_file('id_rsa') #crea un objeto clave leyendo el fichero que contiene la clave
-    client.connect(server, username=username, pkey= k) 
-    stdin, stdout, stderr = client.exec_command('ls')
-    result= stdout.read().decode()
-    print(result)
-    return ("Hola")
-@app.route('/config')#no vale, pruebo que ssh funciona con el comando de correlación dado
-def config():
-    server='192.168.1.163' #no sé cual es
-    username='root' #supongo que es vagrant
-    #pk='M:\proyecto\id_rsa.pub' 
-    keyfile = "M:\proyecto\id_rsa"
-    client = paramiko.SSHClient()
-    client.load_system_host_keys()
-    #client.load_host_keys('M:\proyecto')
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy()) #para claves ssh desconocidas
-    client.connect(server, username=username, key_filename=keyfile) #lookforkeys busca archivos de clave privada en ssh
-    stdin, stdout, stderr = client.exec_command('ssh vagrant@172.20.0.11 /home/vagrant/kafka/bin/zookeeper-server-start.sh /home/vagrant/kafka/config/zookeeper.properties')
-    result= stdout.read().decode()
-    return ("config")
+# -------------------------------------------GONFIGURACIÓN SUBSISTEMAS-----------------------------------------------------------------
+
+
 @app.route('/subsistemaconfAA')
 def subsistemaconfAA():
     return render_template("admin/subsistemaconfAA.html")
+
+
 @app.route('/subsistemaconfWFstart')
 def subsistemaconfWFstartrt():
     return ("")
+
+
 @app.route('/subsistemaconfWFstop')
 def subsistemaconfWFstop():
     return ("")
+
+
 @app.route('/subsistemaconfRMstart')
 def subsistemaconfRMstart():
     return ("")
+
+
 @app.route('/subsistemaconfRMstop')
 def subsistemaconfRMstop():
     return ("")
+
+
 @app.route('/subsistemaconfRFstart')
 def subsistemaconfRFstart():
     return ("")
+
+
 @app.route('/subsistemaconfRFstop')
 def subsistemaconfRFstop():
     return ("")
+
+
 @app.route('/subsistemaconfFWstart')
 def subsistemaconfFWstart():
     return ("")
+
+
 @app.route('/subsistemaconfFWstop')
 def subsistemaconfFWstop():
     return ("")
+
+
 @app.route('/subsistemaconfBTstart')
 def subsistemaconfBTstart():
     return ("")
+
+
 @app.route('/subsistemaconfBTstop')
 def subsistemaconfBTstop():
     return ("")
+
+
 @app.route('/subsistemaconfTIDSstart')
 def subsistemaconfTIDSstart():
     return ("")
+
+
 @app.route('/subsistemaconfTIDSstop')
 def subsistemaconfTIDSstop():
     return ("")
+
+
 @app.route('/subsistemaconfGF')
 def subsistemaconfGF():
     return render_template("admin/subsistemaconfGF.html")
+
+
 @app.route('/subsistemaconfO')
 def subsistemaconfO():
     return render_template("admin/subsistemaconfO.html")
+
+
 @app.route('/subsistemaconfOstart')
 def subsistemaconfOstart():
     return ("")
+
+
 @app.route('/subsistemaconfOstop')
 def subsistemaconfOstop():
     return ("")
+
+
 @app.route('/subsistemaconfFUstart')
 def subsistemaconfFUstart():
     return ("")
+
+
 @app.route('/subsistemaconfOstart')
 def subsistemaconfFUstop():
     return ("")
+
+
 @app.route('/subsistemaconfCO')
 def subsistemaconfCO():
     return render_template("admin/subsistemaconfCO.html")
+
+
 @app.route('/subsistemaconfCOstart')
 def subsistemaconfCOstart():
     return ("")
+
+
 @app.route('/subsistemaconfCOstop')
 def subsistemaconfCOstop():
     return ("")
+
 
 @app.route('/salir')
 def salir():
     session.clear()
     return redirect(url_for("main"))
-#-------------------------------------------tiempo(novale)-----------------------------------------------------------------
-@app.route('/time')#novale
+# -------------------------------------------tiempo(novale)-----------------------------------------------------------------
+
+
+@app.route('/time')  # novale
 def time():
     import time
     from datetime import datetime
 
     start_time = time.process_time()
 
-    ts=time.time()
-    print(ts) #segundos desde epoch con precisión de microsegundos (epoch=1 enero 1970)
-    print(time.ctime(ts)) #convertido a tiempo del ordenador
+    ts = time.time()
+    print(ts)  # segundos desde epoch con precisión de microsegundos (epoch=1 enero 1970)
+    print(time.ctime(ts))  # convertido a tiempo del ordenador
 
-    now= datetime.fromtimestamp(ts)#convertido a fecha separada por guiones y hora
+    # convertido a fecha separada por guiones y hora
+    now = datetime.fromtimestamp(ts)
     print(now)
 
     end_time = time.process_time()
 
     print("tiempo de duración =", end_time-start_time)
     return "hola"
-#-------------------------------------------CLAVES-----------------------------------------------------------------
-@app.route('/claves')
-def claves():
-    #Genero llaves con un random
+# -------------------------------------------CLAVES-----------------------------------------------------------------
+
+
+def new_keys_generation(type):
+
+    # Genero llaves con un random
     random_generator = Crypto.Random.new().read
     private_key = RSA.generate(1024, random_generator)
     public_key = private_key.publickey()
-    #Exporto las llaves para convertirlas a utf-8
-    private_key=private_key.export_key(format='PEM')
-    public_key=public_key.export_key(format='PEM')
 
-    file_out = open("private.pem", "wb")
+    # Exporto las llaves para convertirlas a utf-8
+    private_key = private_key.export_key()
+    public_key = public_key.export_key()
+
+    private_key_PATH = f"keystore/{type}_private"
+    public_key_PATH = f"keystore/{type}_public.pub"
+
+    file_out = open(private_key_PATH, "wb")
     file_out.write(private_key)
     file_out.close()
-    
-    file_out = open("public.pem", "wb")
+
+    file_out = open(public_key_PATH, "wb")
     file_out.write(public_key)
     file_out.close()
-    #Convierto de binario a utf-8
-    #private_key= binascii.hexlify(private_key).decode('utf-8')
-    #public_key= binascii.hexlify(public_key).decode('utf-8') #la corta
-    #print(private_key)
-    
-    #------------------------------------------------------------------------
 
-    #CIFRO UN MENSAJE importando llaves y conviertiendo de utf-8 a binario
-    #private_key=RSA.import_key(binascii.unhexlify(private_key))
-    #public_key=RSA.import_key(binascii.unhexlify(public_key))
-
-    #message="Hola mundo"
-    #message=message.encode()
-    #cipher= PKCS1_OAEP.new(public_key)
-    #message_encrypted=cipher.encrypt(message)
-    #print(message_encrypted)
-
-    #cipher = PKCS1_OAEP.new(private_key)
-    #messagef = cipher.decrypt(message_encrypted)
-    #print(message)
-
-    #print(private_key)
-    #print(public_key)
-    return (private_key)
-'''
-@app.route('/envio')
-def envio():
-    #Genero llaves con un random
-    random_generator = Crypto.Random.new().read
-    private_key = RSA.generate(1024, random_generator)
-    public_key = private_key.publickey()
-    #Exporto las llaves para convertirlas a utf-8
-    private_key=private_key.export_key(format='PEM')
-    public_key=public_key.export_key(format='PEM')
-
-    file_out = open("private.pem", "wb")
-    file_out.write(private_key)
-    file_out.close()
-    file_out = open("public.pem", "wb")
-    file_out.write(public_key)
-    file_out.close()
     try:
-        connUser='root'
-        connHost='192.168.1.159'
-        connPath="/root"
-        scp = subprocess.Popen(["scp", "private.pem", "{}@{}:{}".format(connUser, connHost, connPath)])
-        #print (open("localpath").read())
+        connPath = "/root/.ssh"
+        scp = subprocess.Popen(
+            ["scp", private_key_PATH, "{}@{}:{}".format(PANDORA_USER, PANDORA_HOST, connPath)])
+        scp.wait()
+        os.unlink(private_key_PATH)
     except subprocess.CalledProcessError:
         print('ERROR: Connection to host failed!')
-    return('hola')'''
-@app.route('/pruebaclave')
-def pruebaclave():
-    #Genero llaves con un random
-    clave_random = Crypto.Random.new().read
-    private_key = RSA.generate(1024, clave_random)
-    public_key = private_key.publickey()
-    #Exporto las llaves para convertirlas a utf-8
-    private_key=private_key.export_key(format='PEM')
-    public_key=public_key.export_key(format='PEM')
+    return (1)
 
-    file_out = open("id_rsa", "wb")
-    file_out.write(private_key)
-    file_out.close()
-    file_out = open("id_rsa.pub", "wb")
-    file_out.write(public_key)
-    file_out.close()
-    try:
-        connUser='root'
-        connHost='192.168.1.163'
-        connPath="root/.ssh"
-        scp = subprocess.Popen(["scp", "id_rsa", "{}@{}:{}".format(connUser, connHost, connPath)])
-        #print (open("localpath").read())
-    except subprocess.CalledProcessError:
-        print('ERROR: Connection to host failed!')
-    return("hola")
 
 @app.route('/clavessensores')
 def clavessensores():
-    path = "M:\proyecto\id_rsa.pub"
-    return send_file(path, as_attachment=True) 
+    if not (os.path.isfile("../keystore/sensores_public.pub")):
+        new_keys_generation('sensores')
+
+    path = "..\keystore\sensores_public.pub"
+    return send_file(path, as_attachment=True)
+
+
 @app.route('/clavessubsistemas')
 def clavessubsistemas():
-    return render_template("admin/clavessubsistemas.html") 
+    if not (os.path.isfile("../keystore/subsistemas_public.pub")):
+        new_keys_generation('subsistemas')
 
-@app.route('/descargas')#novale
-def descargas():  
-    path = "M:\proyecto\public.pem"
-    try:
-        return send_file(path, as_attachment=True), redirect(url_for("clavessensores"))
-    except:
-        print("Error")
-    return("hello")
-@app.route('/clavesssh')
-def clavesssh():
-    random_generator = Crypto.Random.new().read
-    private_key = RSA.generate(2048, random_generator)
-    public_key = private_key.publickey()
-    #Exporto las llaves para convertirlas a utf-8
-    private_key=private_key.export_key(format='PEM')
-    public_key=public_key.export_key(format='PEM')
+    path = "..\keystore\subsistemas_public.pub"
+    return send_file(path, as_attachment=True)
 
-    file_out = open(".ssh/id_rsa", "wb")
-    file_out.write(private_key)
-    file_out.close()
-    
-    file_out = open(".ssh/id_rsa.pub", "wb")
-    file_out.write(public_key)
-    file_out.close()
-    return("")
-@app.route('/envioclavessh')
-def envioclavessh():
-    try:
-        connUser='root'
-        connHost='192.168.1.163'
-        connPath="root/.ssh/authorized_keys"
-        scp = subprocess.Popen(["scp", ".ssh/id_rsa.pub", "{}@{}:{}".format(connUser, connHost, connPath)])
-        #print (open("localpath").read())
-    except subprocess.CalledProcessError:
-        print('ERROR: Connection to host failed!')
-    return("")
+
 @app.route('/a')
 def a():
-    server='192.168.1.163'
-    username='root'
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    #pkey=paramiko.RSAKey.from_private_key_file(".ssh/id_rsassh")
-    client.connect(server, username=username)
-    stdin, stdout, stderr = client.exec_command('ls')
-    result= stdout.read().decode()
-    print(result)
-    return ("Hola")
+    scp = subprocess.Popen(
+        f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
+    return (scp.communicate()[0])
