@@ -1,26 +1,64 @@
 {% extends "templates/layout.html" %}
-{% block css %} 
-    <link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
-    <style type="text/css">
-        .bg{
-        background-image: url('../../static/images/conf.jpg');}
-        </style>
+{% block css %}
+<link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+<style type="text/css">
+    .bg {
+        background-image: url('../../static/images/conf.jpg');
+    }
+</style>
 {% endblock %}
 
 {% block title %}
-    <h1 class="font-weight-bold">Configuración del Subsistema de Correlación</h1>
+<h1 class="font-weight-bold">Configuración Subsistema CO</h1>
 {% endblock %}
-                        
+
 {% block main %}
-<div class="card bg" style="width: 40rem; margin-top: 5px;">
-    <div class="card-body">
-      <h5 class="card-title"><b><u>Subsistema Correlación</u></b></h5>
-      <h6 class="card-subtitle mb-2 text-muted">Configuraciones:</h6>
-      <p class="card-text">
-          Permitirá iniciar la correlación o detenerla.
-        </p>
-        <a class="btn btn-info" href="/subsistemaconfCOstart"><i class="fas fa-play-circle mr-2"></i>START</a>
-        <a class="btn btn-info" href="/subsistemaconfCOstop"><i class="fas fa-stop mr-2"></i>STOP</a>
+<!--Si hay mensajes (de flash) muéstralo en pantalla-->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span>{{ message }}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<div class="row">
+    <div class="col-md-5">
+        <div class="card bg" style="width: 40rem;">
+            <div class="card-body">
+                <h5 class="card-title"><b><u>CORRELACIÓN</u></b></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Subsistema CO</h6>
+                <p class="card-text">
+                <ul>
+                    <form method="POST" action="/correlacion">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Usuario</label>
+                            <input type="text" class="form-control" id="recipient-name" name="usuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">IP</label>
+                            <input type="text" class="form-control" id="message-text" name="ip">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Acción</label>
+                            <select class="tipo" name="action">
+                                <option value="defect">Seleccione una acción</button></option>
+                                <option value="start">START Correlación</button></option>
+                                <option value="stop">STOP Correlación</button></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-info"><b>Ejecutar acción</b></button>
+                    </form>
+                </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block js %}

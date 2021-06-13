@@ -278,7 +278,7 @@ def sensoresBT():
     cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresBT.html", id2=idstr)
+        return render_template("admin/sensoresBT.html", id2=idstr, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresBT.html")
 
@@ -303,7 +303,7 @@ def sensoresRF():
     cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresRF.html", id3=idstr)
+        return render_template("admin/sensoresRF.html", id3=idstr, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRF.html")
 
@@ -328,7 +328,7 @@ def sensoresRM():
     cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/sensoresRM.html", id4=idstr)
+        return render_template("admin/sensoresRM.html", id4=idstr, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/sensoresRM.html")
 
@@ -443,7 +443,7 @@ def consolaPandora():
     cur.close()
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/consolaPandora.html")
+        return render_template("admin/consolaPandora.html", PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/consolaPandora.html")
 
@@ -458,7 +458,7 @@ def subsistemaBD():
     perfil = session.get('perfil')
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaBD.html", id9=id_str)
+        return render_template("admin/subsistemaBD.html", id9=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaBD.html")
 
@@ -470,18 +470,10 @@ def subsistemaAA():
     print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaAA.html", id5=id_str)
+        return render_template("admin/subsistemaAA.html", id5=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaAA.html", id5=id_str)
 
-
-@app.route('/subsistemaCM')
-def subsistemaCM():
-    perfil = session.get('perfil')
-    if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaCM.html")
-    elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaCM.html")
 
 
 @app.route('/subsistemaGF')
@@ -491,7 +483,7 @@ def subsistemaGF():
     print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaGF.html", id8=id_str)
+        return render_template("admin/subsistemaGF.html", id8=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaGF.html", id8=id_str)
 
@@ -503,7 +495,7 @@ def subsistemaO():
     print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaO.html", id6=id_str)
+        return render_template("admin/subsistemaO.html", id6=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaO.html")
 
@@ -515,120 +507,361 @@ def subsistemaCO():
     print(id_str)
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/subsistemaCO.html", id7=id_str)
+        return render_template("admin/subsistemaCO.html", id7=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
         return render_template("noadmin/subsistemaCO.html")
 # -------------------------------------------GONFIGURACIÓN SUBSISTEMAS-----------------------------------------------------------------
 
-
+#--------------------------------------------CONFIGURACIÓN AA--------------------------------------------------------------------------
 @app.route('/subsistemaconfAA')
 def subsistemaconfAA():
     return render_template("admin/subsistemaconfAA.html")
 
 
-@app.route('/subsistemaconfWFstart')
-def subsistemaconfWFstartrt():
-    return ("")
+@app.route('/subsistemaconfsensores', methods=["POST"])
+def subsistemaconfsensores():
+    usuario = request.form["usuario"]
+    ip = request.form["ip"]
+    action= request.form["action"]
+    if usuario == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfGF"))
+    if ip == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfGF"))
+    if action == "defect":
+        flash("Por favor seleccione una acción")
+        return redirect(url_for("subsistemaconfGF"))
+    if action == "startwifi":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_WF.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopwifi":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_WF.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startrm":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_RM.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stoprm":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_RM.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startrf":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_RF.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stoprf":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_RF.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startfw":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_FW.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopfw":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_FW.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startbt":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_BT.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopbt":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_BT.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "starttids":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_TIDS.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stoptids":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_TIDS.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
 
 
-@app.route('/subsistemaconfWFstop')
-def subsistemaconfWFstop():
-    return ("")
-
-
-@app.route('/subsistemaconfRMstart')
-def subsistemaconfRMstart():
-    return ("")
-
-
-@app.route('/subsistemaconfRMstop')
-def subsistemaconfRMstop():
-    return ("")
-
-
-@app.route('/subsistemaconfRFstart')
-def subsistemaconfRFstart():
-    return ("")
-
-
-@app.route('/subsistemaconfRFstop')
-def subsistemaconfRFstop():
-    return ("")
-
-
-@app.route('/subsistemaconfFWstart')
-def subsistemaconfFWstart():
-    return ("")
-
-
-@app.route('/subsistemaconfFWstop')
-def subsistemaconfFWstop():
-    return ("")
-
-
-@app.route('/subsistemaconfBTstart')
-def subsistemaconfBTstart():
-    return ("")
-
-
-@app.route('/subsistemaconfBTstop')
-def subsistemaconfBTstop():
-    return ("")
-
-
-@app.route('/subsistemaconfTIDSstart')
-def subsistemaconfTIDSstart():
-    return ("")
-
-
-@app.route('/subsistemaconfTIDSstop')
-def subsistemaconfTIDSstop():
-    return ("")
-
-
-@app.route('/subsistemaconfGF')
+@app.route('/subsistemaconfUBA', methods=["POST"])
+def subsistemaconfUBA():
+    usuario = request.form["usuario"]
+    ip = request.form["ip"]
+    action = request.form["action"]
+    if usuario == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfAA"))
+    if ip == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfAA"))
+    if action == "defect":
+        flash("Por favor seleccione una acción")
+        return redirect(url_for("subsistemaconfAA"))
+    if action == "startubaall":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_all.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopubaall":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_all.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startuba1":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_mod1.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopuba1":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_mod1.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startuba2":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_mod2.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopuba2":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_mod2.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startuba3":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_mod3.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopuba3":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_mod3.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startuba4":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_mod4.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopuba4":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_mod4.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startuba5":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_mod5.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopuba5":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_mod5.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startuba6":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_mod6.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopuba6":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_mod6.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "startuba7":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/launch_spark_UBA_mod7.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stopuba7":
+        scp = subprocess.Popen(
+            f"ssh {usuario}@{ip} /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_spark_UBA_mod7.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+#--------------------------------------------CONFIGURACIÓN GF--------------------------------------------------------------------------
+@app.route('/subsistemaconfGF',methods=["GET", "POST"])
 def subsistemaconfGF():
-    return render_template("admin/subsistemaconfGF.html")
+    if request.method == "GET":
+        return render_template("admin/subsistemaconfGF.html")
+    else:
+        usuariokafka = request.form["usuariokafka"]
+        ipkafka = request.form["ipkafka"]
+        accionkafka = request.form["accionkafka"]
+
+        if (usuariokafka) == "":
+            flash("Debe indicar un usuario")
+            return redirect(url_for("subsistemaconfGF"))
+        if (ipkafka) == "":
+            flash("Debe indicar una dirección IP")
+            return redirect(url_for("subsistemaconfGF"))
+        if accionkafka == "start":
+            scp = subprocess.Popen(
+                f"ssh {usuariokafka}@{ipkafka} /home/vagrant/kafka/bin/kafka-server-start.sh / home/vagrant/kafka/config/server.properties", stdout=subprocess.PIPE)
+            return (scp.communicate()[0])
+        if accionkafka == "stop":
+           scp = subprocess.Popen(
+               f"ssh {usuariokafka}@{ipkafka} bash /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_kafka.sh", stdout=subprocess.PIPE)
+           return (scp.communicate()[0])
+
+     
+    #return render_template("admin/subsistemaconfGF.html")
+@app.route('/zookeper', methods=["POST"])
+def zookeeper():
+    usuariozookeper = request.form["usuariozookeper"]
+    ipzookeper = request.form["ipzookeper"]
+    accionzookeper = request.form["accionzookeper"]
+    if (usuariozookeper) == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfGF"))
+    if (ipzookeper) == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfGF"))
+    if accionzookeper == "start":
+        scp = subprocess.Popen(
+            f"ssh {usuariozookeper}@{ipzookeper} /home/vagrant/kafka/bin/zookeeper-server-start.sh / home/vagrant/kafka/config/zookeeper.properties", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if accionzookeper == "stop":
+        scp = subprocess.Popen(
+            f"ssh {usuariozookeper}@{ipzookeper} bash /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/stop_zookeeper.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    
+    return redirect(url_for("subsistemasconfGF"))
+
+@app.route('/listtopics', methods=["POST"])
+def listartopics():
+    usuariotopics = request.form["usuariotopics"]
+    iptopics = request.form["iptopics"]
+    if (usuariotopics) == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfGF"))
+    if (iptopics) == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfGF"))
+    scp = subprocess.Popen(
+        f"ssh {usuariotopics}@{iptopics} bash /home/vagrant/scripts_core_plica/pandora_fms_agente_vagrant/check_list_topics.sh", stdout=subprocess.PIPE)
+    return (scp.communicate()[0])
 
 
+@app.route('/createtopic', methods=["POST"])
+def createtopic():
+    usuariocrtopics = request.form["usuariocrtopics"]
+    ipcrtopics = request.form["ipcrtopics"]
+    broker_ip = request.form["broker_ip"]
+    puerto = request.form["puerto"]
+    valor1 = request.form["valor1"]
+    valor2 = request.form["valor2"]
+    topicname = request.form["topicname"]
+    if (usuariocrtopics) == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfGF"))
+    if (ipcrtopics) == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfGF"))
+    if (broker_ip) == "":
+        flash("Debe indicar la dirección IP del Broker")
+        return redirect(url_for("subsistemaconfGF"))
+    if (puerto) == "":
+        flash("Debe indicar un puerto")
+        return redirect(url_for("subsistemaconfGF"))
+    if (valor1 or valor2) == "":
+        flash("Debe indicar un valor")
+        return redirect(url_for("subsistemaconfGF"))
+    if (topicname) == "":
+        flash("Debe indicar el nombre del TOPIC a crear")
+        return redirect(url_for("subsistemaconfGF"))
+
+    scp = subprocess.Popen(
+        f'ssh {usuariocrtopics}@{ipcrtopics} /home/vagrant/kafka/bin/kafka-topics.sh --create --bootstrap-server={broker_ip}:${puerto} --command-config=/opt/kafka/config/producer_ssl.properties --replication-factor {valor1} --partitions {valor2} --topic "{topicname}"  --config retention.ms=5000', stdout=subprocess.PIPE)
+    return (scp.communicate()[0])
+
+
+@app.route('/rmtopic', methods=["POST"])
+def rmtopic():
+    usuariormtopics = request.form["usuariormtopics"]
+    iprmtopics = request.form["iprmtopics"]
+    brokerrm_ip = request.form["brokerrm_ip"]
+    topicrmname = request.form["topicrmname"]
+
+    if usuariormtopics == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfGF"))
+    if iprmtopics == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfGF"))
+    if (brokerrm_ip) == "":
+        flash("Debe indicar la dirección IP del broker")
+        return redirect(url_for("subsistemaconfGF"))
+    if (topicrmname) == "":
+        flash("Debe indicar el nombre del TOPIC a eliminar")
+        return redirect(url_for("subsistemaconfGF"))
+    scp = subprocess.Popen(
+        f'ssh {usuariormtopics}@{iprmtopics} /home/vagrant/kafka/bin/kafka-topics.sh --delete --zookeeper {brokerrm_ip}:2181 --topic "{topicrmname}"', stdout=subprocess.PIPE)
+    return (scp.communicate()[0])
+#--------------------------------------------CONFIGURACIÓN O--------------------------------------------------------------------------
 @app.route('/subsistemaconfO')
 def subsistemaconfO():
     return render_template("admin/subsistemaconfO.html")
 
 
-@app.route('/subsistemaconfOstart')
-def subsistemaconfOstart():
-    return ("")
+@app.route('/ontologias', methods=["POST"])
+def ontologias():
+    usuario = request.form["usuario"]
+    ip = request.form["ip"]
+    action = request.form["action"]
+    if usuario == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfO"))
+    if ip == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfO"))
+    if action == "defect":
+        flash("Por favor, seleccione una acción")
+        return redirect(url_for("subsistemaconfO"))
+    if action == "start":
+        scp = subprocess.Popen(
+            f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if action == "stop":
+        scp = subprocess.Popen(
+            f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
 
 
-@app.route('/subsistemaconfOstop')
-def subsistemaconfOstop():
-    return ("")
-
-
-@app.route('/subsistemaconfFUstart')
-def subsistemaconfFUstart():
-    return ("")
-
-
-@app.route('/subsistemaconfOstart')
-def subsistemaconfFUstop():
-    return ("")
-
-
+@app.route('/fuseki', methods=["POST"])
+def fuseki():
+    usuariofuseki = request.form["usuariofuseki"]
+    ipfuseki = request.form["ipfuseki"]
+    actionfuseki = request.form["actionfuseki"]
+    if usuariofuseki == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfO"))
+    if ipfuseki == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfO"))
+    if actionfuseki == "defect":
+        flash("Por favor, seleccione una acción")
+        return redirect(url_for("subsistemaconfO"))
+    if actionfuseki == "start":
+        scp = subprocess.Popen(
+            f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+    if actionfuseki == "stop":
+        scp = subprocess.Popen(
+            f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
+#--------------------------------------------CONFIGURACIÓN CO--------------------------------------------------------------------------
 @app.route('/subsistemaconfCO')
 def subsistemaconfCO():
     return render_template("admin/subsistemaconfCO.html")
 
 
-@app.route('/subsistemaconfCOstart')
-def subsistemaconfCOstart():
-    return ("")
+@app.route('/correlacion', methods=["POST"])
+def correlacion():
+    usuario = request.form["usuario"]
+    ip = request.form["ip"]
+    action = request.form["action"]
+    if usuario == "":
+        flash("Debe indicar un usuario")
+        return redirect(url_for("subsistemaconfCO"))
+    if ip == "":
+        flash("Debe indicar una dirección IP")
+        return redirect(url_for("subsistemaconfCO"))
+    if action == "defect":
+        flash("Por favor, seleccione una acción")
+        return redirect(url_for("subsistemaconfCO"))
+    if action == "start":
+        scp = subprocess.Popen(
+            f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
+        flash("Subsistema arrancado con éxito")
+        return redirect(url_for("subsistemaconfCO"))
+        #return (scp.communicate()[0])
+    if action == "stop":
+        scp = subprocess.Popen(
+            f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
+        return (scp.communicate()[0])
 
-
-@app.route('/subsistemaconfCOstop')
-def subsistemaconfCOstop():
-    return ("")
 
 
 @app.route('/salir')
