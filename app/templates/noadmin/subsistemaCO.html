@@ -1,0 +1,19 @@
+{% extends "noadmin/templates/layoutna.html" %}
+{% block css %}
+<link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+{% endblock %}
+
+{% block title %}
+<h1 class="font-weight-bold">Sensor WiFi</h1>
+{% endblock %}
+
+{% block main %}
+<iframe id="sensores"
+    src="http://{{PANDORA_HOST}}/pandora_console/index.php?sec=view&sec2=operation/agentes/estado_agente&group_id={{id7}}"
+    sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups allow-modals allow-presentation allow-top-navigation-by-user-activation"
+    width='1000' height='500'></iframe>
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}

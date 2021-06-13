@@ -256,7 +256,7 @@ def sensoresWF():
     if (perfil == 'Administrador'):
         return render_template("admin/sensoresWF.html", idwifi=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/sensoresWF.html")
+        return render_template("noadmin/sensoresWF.html", idwifi=id_str, PANDORA_HOST=PANDORA_HOST)
 
 
 @app.route('/sensoresBT')
@@ -280,7 +280,7 @@ def sensoresBT():
     if (perfil == 'Administrador'):
         return render_template("admin/sensoresBT.html", id2=idstr, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/sensoresBT.html")
+        return render_template("noadmin/sensoresBT.html", id2=idstr, PANDORA_HOST=PANDORA_HOST)
 
 
 @app.route('/sensoresRF')
@@ -305,7 +305,7 @@ def sensoresRF():
     if (perfil == 'Administrador'):
         return render_template("admin/sensoresRF.html", id3=idstr, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/sensoresRF.html")
+        return render_template("noadmin/sensoresRF.html", id3=idstr, PANDORA_HOST=PANDORA_HOST)
 
 
 @app.route('/sensoresRM')
@@ -330,7 +330,7 @@ def sensoresRM():
     if (perfil == 'Administrador'):
         return render_template("admin/sensoresRM.html", id4=idstr, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/sensoresRM.html")
+        return render_template("noadmin/sensoresRM.html", id4=idstr, PANDORA_HOST=PANDORA_HOST)
 
 
 @app.route('/delete/sensor/<int:idsensores>')
@@ -349,7 +349,12 @@ def get_sensor(idsensores):
     consulta = ('SELECT * FROM sensores WHERE idsensores= %s')
     cursor.execute(consulta, [idsensores])
     sensor = cursor.fetchall()
-    return render_template('admin/sensoreseditados.html', sensores=sensor[0])
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template('admin/sensoreseditados.html', sensores=sensor[0])
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/sensoreseditados.html", sensores=sensor[0])
+    
 
 
 @app.route('/update/sensores/<int:idsensores>', methods=['POST'])
@@ -379,7 +384,12 @@ def update_sensor(idsensores):
 @app.route('/registrosensores', methods=["GET", "POST"])
 def registrosensores():
     if request.method == "GET":
-        return render_template("admin/registrarsensor.html")
+        perfil = session.get('perfil')
+        if (perfil == 'Administrador'):
+            return render_template("admin/registrarsensor.html")
+        elif(perfil != 'Administrador'):
+            return render_template("noadmin/registrarsensor.html")
+        
     else:
         nombre = request.form["nombreSensor"]
         tipo = request.form["tipoRegistro"]
@@ -445,7 +455,7 @@ def consolaPandora():
     if (perfil == 'Administrador'):
         return render_template("admin/consolaPandora.html", PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/consolaPandora.html")
+        return render_template("noadmin/consolaPandora.html", PANDORA_HOST=PANDORA_HOST)
 
 # -----------------------SUBSISTEMAS------------------------------------------------------------------------------------
 
@@ -460,7 +470,7 @@ def subsistemaBD():
     if (perfil == 'Administrador'):
         return render_template("admin/subsistemaBD.html", id9=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaBD.html")
+        return render_template("noadmin/subsistemaBD.html", id9=id_str, PANDORA_HOST=PANDORA_HOST)
 
 
 @app.route('/subsistemaAA')
@@ -472,7 +482,7 @@ def subsistemaAA():
     if (perfil == 'Administrador'):
         return render_template("admin/subsistemaAA.html", id5=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaAA.html", id5=id_str)
+        return render_template("noadmin/subsistemaAA.html", id5=id_str, PANDORA_HOST=PANDORA_HOST)
 
 
 
@@ -485,7 +495,7 @@ def subsistemaGF():
     if (perfil == 'Administrador'):
         return render_template("admin/subsistemaGF.html", id8=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaGF.html", id8=id_str)
+        return render_template("noadmin/subsistemaGF.html", id8=id_str, PANDORA_HOST=PANDORA_HOST)
 
 
 @app.route('/subsistemaO')
@@ -497,7 +507,7 @@ def subsistemaO():
     if (perfil == 'Administrador'):
         return render_template("admin/subsistemaO.html", id6=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaO.html")
+        return render_template("noadmin/subsistemaO.html", id6=id_str, PANDORA_HOST=PANDORA_HOST)
 
 
 @app.route('/subsistemaCO')
@@ -509,15 +519,18 @@ def subsistemaCO():
     if (perfil == 'Administrador'):
         return render_template("admin/subsistemaCO.html", id7=id_str, PANDORA_HOST=PANDORA_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/subsistemaCO.html")
+        return render_template("noadmin/subsistemaCO.html", id7=id_str, PANDORA_HOST=PANDORA_HOST)
 # -------------------------------------------GONFIGURACIÓN SUBSISTEMAS-----------------------------------------------------------------
 
 #--------------------------------------------CONFIGURACIÓN AA--------------------------------------------------------------------------
 @app.route('/subsistemaconfAA')
-def subsistemaconfAA():
-    return render_template("admin/subsistemaconfAA.html")
-
-
+def subsistemaconfAA(): 
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaconfAA.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaconfAA.html")
+    
 @app.route('/subsistemaconfsensores', methods=["POST"])
 def subsistemaconfsensores():
     usuario = request.form["usuario"]
@@ -664,7 +677,11 @@ def subsistemaconfUBA():
 @app.route('/subsistemaconfGF',methods=["GET", "POST"])
 def subsistemaconfGF():
     if request.method == "GET":
-        return render_template("admin/subsistemaconfGF.html")
+        perfil = session.get('perfil')
+        if (perfil == 'Administrador'):
+            return render_template("admin/subsistemaconfGF.html")
+        elif(perfil != 'Administrador'):
+            return render_template("noadmin/subsistemaconfGF.html")
     else:
         usuariokafka = request.form["usuariokafka"]
         ipkafka = request.form["ipkafka"]
@@ -782,7 +799,12 @@ def rmtopic():
 #--------------------------------------------CONFIGURACIÓN O--------------------------------------------------------------------------
 @app.route('/subsistemaconfO')
 def subsistemaconfO():
-    return render_template("admin/subsistemaconfO.html")
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaconfO.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaconfO.html")
+    
 
 
 @app.route('/ontologias', methods=["POST"])
@@ -834,8 +856,11 @@ def fuseki():
 #--------------------------------------------CONFIGURACIÓN CO--------------------------------------------------------------------------
 @app.route('/subsistemaconfCO')
 def subsistemaconfCO():
-    return render_template("admin/subsistemaconfCO.html")
-
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/subsistemaconfCO.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/subsistemaconfCO.html")
 
 @app.route('/correlacion', methods=["POST"])
 def correlacion():

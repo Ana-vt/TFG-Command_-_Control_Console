@@ -1,0 +1,139 @@
+{% extends "noadmin/templates/layoutna.html" %}
+{% block css %}
+<link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+<style type="text/css">
+    .bg {
+        background-image: url('../../static/images/conf.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+<h1 class="font-weight-bold">Configuración Subsistema AA</h1>
+{% endblock %}
+
+{% block main %}
+<!--Si hay mensajes (de flash) muéstralo en pantalla-->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span>{{ message }}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<table class="table table-bordered table-striped bg">
+    <thead>
+        <tr>
+            <th scope="col">Sensor</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">
+                <ul>
+                    <li>WF</li>
+                    <li>RM</li>
+                    <li>RF</li>
+                    <li>FW</li>
+                    <li>BT</li>
+                    <li>TIDS</li>
+                </ul>
+            </th>
+            <td>
+                <form method="POST" action="/subsistemaconfUBA">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Usuario</label>
+                        <input type="text" class="form-control" id="recipient-name" name="usuario">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">IP de Spark</label>
+                        <input type="text" class="form-control" id="message-text" name="ip">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Acción</label>
+                        <select class="tipo" name="action">
+                            <option value="defect">Seleccionar acción</button></option>
+                            <option value="startwifi">START WiFi</button></option>
+                            <option value="stopwifi">STOP WiFi</button></option>
+                            <option value="startrm">START RM</button></option>
+                            <option value="stoprm">STOP RM</button></option>
+                            <option value="startrf">START RF</button></option>
+                            <option value="stoprf">STOP RF</button></option>
+                            <option value="startfw">START FW</button></option>
+                            <option value="stopfw">STOP FW</button></option>
+                            <option value="startbt">START BT</button></option>
+                            <option value="stopbt">STOP BT</button></option>
+                            <option value="starttids">START TIDS</button></option>
+                            <option value="stoptids">STOP TIDS</button></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-info"><b>Ejecutar acción</b></button>
+                </form>
+            </td>
+        <tr>
+            <th scope="row">
+                <ul>
+                    <li>UBA todos</li>
+                    <li>UBA 1</li>
+                    <li>UBA 2</li>
+                    <li>UBA 3</li>
+                    <li>UBA 4</li>
+                    <li>UBA 5</li>
+                    <li>UBA 6</li>
+                    <li>UBA 7</li>
+
+                </ul>
+            <td>
+                <form method="POST" action="/subsistemaconfUBA">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Usuario</label>
+                        <input type="text" class="form-control" id="recipient-name" name="usuario">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">IP de Spark</label>
+                        <input type="text" class="form-control" id="message-text" name="ip">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Acción</label>
+                        <select class="tipo" name="action">
+                            <option value="defect">Seleccionar acción</button></option>
+                            <option value="startubaall">START UBA All</button></option>
+                            <option value="stopubaall">STOP UBA All</button></option>
+                            <option value="startuba1">START UBA 1</button></option>
+                            <option value="stopuba1">STOP UBA 1</button></option>
+                            <option value="startuba2">START UBA 2</button></option>
+                            <option value="stopuba2">STOP UBA 2</button></option>
+                            <option value="startuba3">START UBA 3</button></option>
+                            <option value="stopuba3">STOP UBA 3</button></option>
+                            <option value="startuba4">START UBA 4</button></option>
+                            <option value="stopuba4">STOP UBA 4</button></option>
+                            <option value="startuba5">START UBA 5</button></option>
+                            <option value="stopuba5">STOP UBA 5</button></option>
+                            <option value="startuba6">START UBA 6</button></option>
+                            <option value="stopuba6">STOP UBA 6</button></option>
+                            <option value="startuba7">START UBA 7</button></option>
+                            <option value="stopuba7">STOP UBA 7</button></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-info"><b>Ejecutar acción</b></button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="card" style="width: 50rem; margin-top: 5px;">
+    <div class="card-body"></div>
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script src="../static/js/clock.js"></script>
+{% endblock %}

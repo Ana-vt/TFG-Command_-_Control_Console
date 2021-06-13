@@ -1,0 +1,177 @@
+{% extends "noadmin/templates/layoutna.html" %}
+{% block css %}
+<link rel="stylesheet" href="../../static/css/index.css" type="text/css" />
+<style type="text/css">
+    .bg {
+        background-image: url('../../static/images/conf.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+<h1 class="font-weight-bold">Configuración Subsistema GF</h1>
+{% endblock %}
+
+{% block main %}
+<!--Si hay mensajes (de flash) muéstralo en pantalla-->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span>{{ message }}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<div class="row">
+    <div class="col-md-5">
+        <div class="card bg" style="width: 25rem;">
+            <div class="card-body">
+                <h5 class="card-title"><b><u>KAFKA</u></b></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Subsistema GF</h6>
+                <p class="card-text">
+                <ul>
+                    <form method="POST" action="/subsistemaconfGF">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Usuario</label>
+                            <input type="text" class="form-control" id="recipient-name" name="usuariokafka">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">IP de Kafka</label>
+                            <input type="text" class="form-control" id="message-text" name="ipkafka">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Acción</label>
+                            <select class="tipo" name="accionkafka">
+                                <option value="start">START Kafka</button></option>
+                                <option value="stop">STOP Kafka</button></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-info"><b>Ejecutar acción</b></button>
+                    </form>
+                </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg" style="width: 25rem;">
+            <div class="card-body">
+                <h5 class="card-title"><b><u>ZOOKEPER</u></b></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Subsistema GF</h6>
+                <p class="card-text">
+                <ul>
+                    <form method="POST" action="/zookeper">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">Usuario</label>
+                            <input type="text" class="form-control" id="recipient-name" name="usuariozookeper">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">IP de Zookeper</label>
+                            <input type="text" class="form-control" id="message-text" name="ipzookeper">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Acción</label>
+                            <select class="tipo" name="accionzookeper">
+                                <option value="start">START Zookeper</button></option>
+                                <option value="stop">STOP Zookeper</button></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-info"><b>Ejecutar acción</b></button>
+                    </form>
+                </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card bg mt-2" style="width: 53rem;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col md-5">
+                <h5 class="card-title"><b><u>LISTAR TOPICS Kafka</u></b></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Subsistema GF</h6>
+                <p class="card-text">
+                <form method="POST" action="/listtopics">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Usuario</label>
+                        <input type="text" class="form-control" id="recipient-name" name="usuariotopics">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">IP de Kafka</label>
+                        <input type="text" class="form-control" id="message-text" name="iptopics">
+                    </div>
+                    </p>
+                    <button type="submit" class="btn btn-info">Listar TOPICS</button>
+            </div>
+            <div class="col md-6">
+                <h5 class="card-title"><b><u> CREAR TOPICS Kafka</u></b></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Subsistema GF</h6>
+                <p class="card-text">
+                <form method="POST" action="/createtopic">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Usuario</label>
+                        <input type="text" class="form-control" id="recipient-name" name="usuariocrtopics">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">IP de Kafka</label>
+                        <input type="text" class="form-control" id="message-text" name="ipcrtopics">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">IP del broker</label>
+                        <input type="text" class="form-control" id="message-text" name="broker_ip">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Puerto</label>
+                        <input type="text" class="form-control" id="message-text" name="puerto">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Valor 1</label>
+                        <input type="text" class="form-control" id="message-text" name="valor1">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Valor 2</label>
+                        <input type="text" class="form-control" id="message-text" name="valor2">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Nombre del topic</label>
+                        <input type="text" class="form-control" id="message-text" name="topicname">
+                    </div>
+                    </p>
+                    <button type="submit" class="btn btn-info">Crear TOPIC</button>
+            </div>
+            <div class="col md-6">
+                <h5 class="card-title"><b><u> ELIMINAR TOPIC Kafka</u></b></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Subsistema GF</h6>
+                <p class="card-text">
+                <form method="POST" action="/rmtopic">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Usuario</label>
+                        <input type="text" class="form-control" id="recipient-name" name="usuariormtopics">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">IP de Kafka</label>
+                        <input type="text" class="form-control" id="message-text" name="iprmtopics">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">IP del broker</label>
+                        <input type="text" class="form-control" id="message-text" name="brokerrm_ip">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Nombre del topic</label>
+                        <input type="text" class="form-control" id="message-text" name="topicrmname">
+                    </div>
+                    </p>
+                    <button type="submit" class="btn btn-info">Eliminar TOPIC</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/clock.js"></script>
+{% endblock %}
