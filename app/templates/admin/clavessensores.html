@@ -7,8 +7,51 @@
 <h1 class="font-weight-bold">Claves Sensores</h1>
 {% endblock %}
 
-{% block main %}        
-
+{% block main %}
+<div class="row">
+  <div class="botondiv">
+    <a class="btn btn-outline-info btn-lg ml-3" href="/botonsensores"><i class="fas fa-arrow-right mr-2"></i> Pulse aquí para DESCARGAR la clave pública</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col md-6">
+    <div class="card text-white bg-dark mb-3 mt-2" style="max-width: 50rem;">
+      <div class="card-header">ATENCIÓN</div>
+      <div class="card-body">
+        <h5 class="card-title">ANTES DE DESCARGAR</h5>
+        <p class="card-text">
+          <ul>
+            <li>Antes de descargar la clave pública debe comprobar si la conexión ssh de su ordenador con Pandora está habilitada sin
+            contraseña. Para ello simplemente abra un terminal de Git Bash y conéctese al servidor de Pandora (ssh root@"ip_PANDORA"). Si le deja conectarse sin el uso de contraseña, pase a la tarjeta azul de la derecha "CLAVE SENSORES". En caso contrario siga los siguientes pasos:</li>
+              <ol>
+                <li>Abra el terminal <b>Git Bash</b></li>
+                <li>Compruebe si existe el directorio .ssh . De no ser así, creélo (<i>mkdir .ssh</i>).</li>
+                <li>A continuación diríjase a ese directorio recién creado (<i>cd .ssh</i>). </li>
+                <li>Ahora introduzca el siguiente comando que generará el par de claves (<i>ssh-keygen.exe</i>) Se le preguntará sobre el
+                  directorio donde quiere guardar las claves (PULSE ENTER) y sobre una "frasecontraseña" (PULSE ENTER). </li>
+                <li>Por último compruebe que la conexión ssh es exitosa y no requiere de contraseña (ssh root@"ip_PANDORA").</li>
+              </ol>
+            </li></li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col md-5">
+    <div class="card text-white bg-info mb-3 mt-2" style="max-width: 40rem;">
+      <div class="card-header">CLAVE SENSORES</div>
+      <div class="card-body">
+        <h5 class="card-title">Información sobre las claves</h5>
+        <p class="card-text">
+          <ul>
+            <li>Estas claves permiten la conexión entre Pandora y los sensores.</li>
+            <li>Tan solo es necesario descargarse la clave pública para su posterior uso a la hora de comunicarse con Pandora. La privada se reenvía directamente al servidor de Pandora.</li>
+            <li><b>IMPORTANTE: Antes de descargarla debe comprobar si la conexión ssh de su ordenador con Pandora es válida sin contraseña. Lea la tarjeta gris de la izquierda titulada "ATENCIÓN".</b></li>
+          </ul> 
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block js %}
