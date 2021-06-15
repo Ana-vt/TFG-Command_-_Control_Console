@@ -1026,7 +1026,7 @@ def clavesubsistemas():
     if (perfil == 'Administrador'):
         return render_template("admin/clavessubsistemas.html")
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/clavesusbsitemas.html")
+        return render_template("noadmin/clavessubsistemas.html")
 
 @app.route('/botonsensores')
 def botonsensores():
