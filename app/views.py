@@ -29,7 +29,8 @@ salt = bcrypt.gensalt()
 PANDORA_HOST = '192.168.1.180'
 PANDORA_USER = 'root'
 
-#PATH WINDOWS
+#RIESGO DINÁMICO CONFIG
+RISK_HOST = '192.168.1.137'
 
 
 @app.route('/')
@@ -37,9 +38,9 @@ def main():
     if 'nombre' in session:
         perfil = session.get('perfil')
         if (perfil == 'Administrador'):
-            return render_template("admin/index.html")
+            return render_template("admin/index.html", RISK_HOST=RISK_HOST)
         elif(perfil != 'Administrador'):
-            return render_template("noadmin/index.html")
+            return render_template("noadmin/index.html", RISK_HOST=RISK_HOST)
     else:
         return render_template("login.html")
 
@@ -48,9 +49,9 @@ def main():
 def index():
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/index.html")
+        return render_template("admin/index.html", RISK_HOST=RISK_HOST)
     else:
-        return render_template("noadmin/index.html")
+        return render_template("noadmin/index.html", RISK_HOST=RISK_HOST)
 
 # ------------------------------ADMINISTRACIÓN--------------------------------------------------------
 
@@ -1036,17 +1037,17 @@ def a():
 def dynamicrisk():
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/riesgo.html")
+        return render_template("admin/riesgo.html", RISK_HOST=RISK_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/riesgo.html")
+        return render_template("noadmin/riesgo.html", RISK_HOST=RISK_HOST)
 
 @app.route('/dataquery')
 def dataquery():
     perfil = session.get('perfil')
     if (perfil == 'Administrador'):
-        return render_template("admin/data.html")
+        return render_template("admin/data.html", RISK_HOST=RISK_HOST)
     elif(perfil != 'Administrador'):
-        return render_template("noadmin/data.html")
+        return render_template("noadmin/data.html", RISK_HOST=RISK_HOST)
 
 
 @app.route('/filtrar?busqueda=crear_usuario')

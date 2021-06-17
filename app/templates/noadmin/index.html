@@ -4,7 +4,7 @@
 
 {% block title %}
 <h1 class="font-weight-bold">Bienvenido a la consola de PLICA</h1>
-<p class="lead text-muted">templateInfo a rellenar más adelante: gráficos, alertas, últimas actividadades...</p>
+<p class="lead text-muted">Consola de mando y control donde gestionar subsistemas y sensores y visualizar riesgos</p>
 {% endblock %}
 
 {% block main %}
@@ -47,7 +47,9 @@
                 <h6 class="font-weight-bold mb-0">RIESGO DINÁMICO</h6>
             </div>
             <div class="card-body">
-                <canvas id="myChart"></canvas>
+                <div class="risk">
+                    <iframe src="http://{{RISK_HOST}}:8082" width='700' height='475'></iframe>
+                </div>
             </div>
         </div>
         <div class="col lg-4 my-3">

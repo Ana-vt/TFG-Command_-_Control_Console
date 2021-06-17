@@ -4,7 +4,7 @@ var udateTime = function() {
         minutes = currentDate.getMinutes(), 
         seconds = currentDate.getSeconds(),
         weekDay = currentDate.getDay(), 
-        day = currentDate.getDay(), 
+        day = currentDate.getDate(), 
         month = currentDate.getMonth(), 
         year = currentDate.getFullYear();
  
@@ -53,6 +53,6 @@ var udateTime = function() {
     document.getElementById('seconds').textContent = seconds;
 };
  
-udateTime();
+updateTime();
  
-setInterval(udateTime, 1000);
+setInterval(updateTime, 1000);
