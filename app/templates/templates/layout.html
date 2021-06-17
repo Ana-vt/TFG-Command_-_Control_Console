@@ -115,8 +115,8 @@
                   <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="dropdown-container ">
-                  <a href="#" class="d-block p-3"><i class="fa fa-minus mr-2"></i>Riesgo dinámico</a>
-                  <a href="#" class="d-block p-3"><i class="fa fa-minus mr-2"></i>Consulta de datos</a>
+                  <a href="/dynamicrisk" class="d-block p-3"><i class="fa fa-minus mr-2"></i>Riesgo dinámico</a>
+                  <a href="/dataquery" class="d-block p-3"><i class="fa fa-minus mr-2"></i>Consulta de datos</a>
                 </div>
                   
             </div>
@@ -132,10 +132,21 @@
                   <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <form class="form-inline position-relative  my-2 d-inline-block">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar">
+                <form class="form-inline position-relative  my-2 d-inline-block" action="/filtrar" method="GET"> 
+                    <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar" name="busqueda" list="listabusqueda">
                     <button class="btn btn-search position-absolute" type="submit"> <i class="fa fa-search" aria-hidden="true"></i></button>
                 </form>
+                <datalist id="listabusqueda" name="select">
+                
+                  <option value="usuarios_registrados">Usuarios registrados</option>
+                
+                  <option value="crear_usuario">Crear usuario </option>
+                
+                  <option value="perfiles_usuario">Perfiles de usuario </option>
+                
+                  <option value="Registro de acciones">Registro de acciones</option>
+                
+                </datalist>
                 
                 <div class="caja mr-0">
                 <ul class="navbar-nav ml-auto">

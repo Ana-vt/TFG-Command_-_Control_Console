@@ -895,30 +895,9 @@ def correlacion():
 def salir():
     session.clear()
     return redirect(url_for("main"))
-# -------------------------------------------tiempo(novale)-----------------------------------------------------------------
 
-
-@app.route('/time')  # novale
-def time():
-    import time
-    from datetime import datetime
-
-    start_time = time.process_time()
-
-    ts = time.time()
-    print(ts)  # segundos desde epoch con precisión de microsegundos (epoch=1 enero 1970)
-    print(time.ctime(ts))  # convertido a tiempo del ordenador
-
-    # convertido a fecha separada por guiones y hora
-    now = datetime.fromtimestamp(ts)
-    print(now)
-
-    end_time = time.process_time()
-
-    print("tiempo de duración =", end_time-start_time)
-    return "hola"
 # -------------------------------------------CLAVES-----------------------------------------------------------------
-def new_shellkeys_generation():
+def new_shellkeys_generation(): #no vale
     if not (os.path.isdir('C:/users/anavel/.ssh')):
         cmd1 = subprocess.run(["mkdir", ".ssh"])
     cmd2 = subprocess.run(["cd", ".ssh"], stdout=subprocess.PIPE, shell=True)
@@ -933,7 +912,7 @@ def shellkeys():
     else:
         print("Las claves para conectarse mediante ssh ya están creadas")
 
-def new_sshkeys_generation():
+def new_sshkeys_generation(): #no vale
 
     # Genero llaves con un random
     random_generator = Crypto.Random.new().read
@@ -972,14 +951,12 @@ def new_sshkeys_generation():
     return (1)
     #quiero hacer el envio de claves de ssh con código para que al darle a un botón lo ejecute: genero claves, guardo en directorio .ssh y las mando por scp la publica a la consola de pandpora
 
-def new_keys_generation(type):
+def new_keys_generation(type): 
 
-    # Genero llaves con un random
     random_generator = Crypto.Random.new().read
     private_key = RSA.generate(1024, random_generator)
     public_key = private_key.publickey()
 
-    # Exporto las llaves para convertirlas a utf-8
     private_key = private_key.export_key()
     public_key = public_key.export_key()
 
@@ -1051,3 +1028,38 @@ def a():
     scp = subprocess.Popen(
         f"ssh {PANDORA_USER}@{PANDORA_HOST} ./bash_prueba.sh", stdout=subprocess.PIPE)
     return (scp.communicate()[0])
+
+#--------------------------------------------VISUALIZACION--------------------------------------------------------------------------
+
+
+@app.route('/dynamicrisk')
+def dynamicrisk():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/riesgo.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/riesgo.html")
+
+@app.route('/dataquery')
+def dataquery():
+    perfil = session.get('perfil')
+    if (perfil == 'Administrador'):
+        return render_template("admin/data.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/data.html")
+
+
+@app.route('/filtrar?busqueda=crear_usuario')
+def filtrar():
+    perfil = session.get('perfil')
+    busqueda = request.form["busqueda"]
+    select = request.form["select"]
+    if (perfil == 'Administrador'):
+        if (busqueda == "usuarios_registrados"):
+            return render_template("admin/usuariosregistrados.html")
+        if (busqueda == "crear_usuario"):
+            return render_template("admin/registroframe.html")
+        else:
+            return render_template("index.html")
+    elif(perfil != 'Administrador'):
+        return render_template("noadmin/data.html")
