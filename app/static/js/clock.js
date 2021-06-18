@@ -1,4 +1,4 @@
-var udateTime = function() {
+var updateTime = function() {
     let currentDate = new Date(),
         hours = currentDate.getHours(),
         minutes = currentDate.getMinutes(), 
