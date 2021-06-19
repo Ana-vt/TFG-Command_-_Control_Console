@@ -18,5 +18,5 @@ Para instalar y ejecutar correctamente el proyecto se deben seguir los siguiente
   - Si tu equipo no permite ejecutar scripts, en el caso de windows, acceder al PowerShell como administrador y ejecutar ***Set_ExecutionPolicy Unrestricted***
 7. Ejecutar ***pip install Flask***. Seguidamente ***pip install flask-mysql***
 9. Ejecutar ***pip install bcrypt***
-10.Por útlimo ejecutar ***pip install Crypto*** y ***pip install pycryptodome*** e ir a la carpeta **/env**, una vez ahí acceder a **Lib\site-packages** y cambiar el módulo **crypto** por **Crypto**
+10.Por útlimo ejecutar ***pip install Crypto*** y ***pip install pycryptodome*** e ir a la carpeta **/env**, una vez ahí acceder a **Lib\site-packages** y cambiar el módulo **crypto** por **Crypto** :bangbang:
 11. Finalmente ejecutar ***pip install Paramiko*** y correr el programa con ***python run.py*** :+1:
