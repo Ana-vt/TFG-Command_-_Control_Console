@@ -20,5 +20,5 @@ Para instalar y ejecutar correctamente el proyecto se deben seguir los siguiente
 9. Ejecutar ***pip install bcrypt***
 10.Por útlimo ejecutar ***pip install Crypto*** y ***pip install pycryptodome*** e ir a la carpeta **/env**, una vez ahí acceder a **Lib\site-packages** y cambiar el módulo **crypto** por **Crypto** :bangbang:
 11. Finalmente ejecutar ***pip install Paramiko*** y correr el programa con ***python run.py*** :+1:
-Al abrir el navegador se debe ver
+Al abrir el navegador se debe ver lo siguiente. (Ingresar *admin* y *soyadmin*)
 <img src="/acceso.PNG" alt="Imagen inicio de sesión"/>
