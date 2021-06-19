@@ -30,7 +30,7 @@ PANDORA_HOST = '192.168.1.180'
 PANDORA_USER = 'root'
 
 #RIESGO DINÁMICO CONFIG
-RISK_HOST = '192.168.1.137'
+RISK_HOST = '192.168.1.144'
 
 
 @app.route('/')
@@ -898,60 +898,6 @@ def salir():
     return redirect(url_for("main"))
 
 # -------------------------------------------CLAVES-----------------------------------------------------------------
-def new_shellkeys_generation(): #no vale
-    if not (os.path.isdir('C:/users/anavel/.ssh')):
-        cmd1 = subprocess.run(["mkdir", ".ssh"])
-    cmd2 = subprocess.run(["cd", ".ssh"], stdout=subprocess.PIPE, shell=True)
-    cmd3 = subprocess.run(["ssh-keygen.exe"])
-    cmd4 = subprocess.run(
-        ["ssh-copy-id", "-i", "~/.ssh/id_rsa.pub root@192.168.1.180"])
-
-@app.route("/shellkeys")
-def shellkeys():
-    if not ((os.path.isfile('C:/users/anavel/.ssh/id_rsa')) and (os.path.isfile('C:/users/anavel/.ssh/id_rsa.pub'))):
-        new_shellkeys_generation()
-    else:
-        print("Las claves para conectarse mediante ssh ya están creadas")
-
-def new_sshkeys_generation(): #no vale
-
-    # Genero llaves con un random
-    random_generator = Crypto.Random.new().read
-    private_key = RSA.generate(2048, random_generator)
-    public_key = private_key.publickey()
-
-    # Exporto las llaves para convertirlas a utf-8
-    private_key = private_key.export_key()
-    public_key = public_key.export_key()
-
-    #user = subprocess.Popen("echo %username%", stdout=subprocess.PIPE)
-    #print(user)
-
-
-    private_key_PATH = f"C:/Users/anavel/.ssh/id_rsa"
-    public_key_PATH = f"C:/Users/anavel/.ssh/id_rsa.pub"
-
-    file_out = open(private_key_PATH, "wb")
-    file_out.write(private_key)
-    file_out.close()
-
-    file_out = open(public_key_PATH, "wb")
-    file_out.write(public_key)
-    file_out.close()
-
-    try:
-        connPath = "/root/.ssh"
-        password = "!plica1234"
-        #client = scp.Client(host={PANDORA_HOST}, user={PANDORA_USER}, password=password)
-        #client.transfer('public_key_PATH', "/root/.ssh")
-        scp = subprocess.Popen(
-            ["scp", public_key_PATH, "{}@{}:{}".format(PANDORA_USER, PANDORA_HOST, connPath)]) #cómo pongo aquí la password
-        scp.wait()
-    except subprocess.CalledProcessError:
-        print('ERROR: Connection to host failed!')
-    return (1)
-    #quiero hacer el envio de claves de ssh con código para que al darle a un botón lo ejecute: genero claves, guardo en directorio .ssh y las mando por scp la publica a la consola de pandpora
-
 def new_keys_generation(type): 
 
     random_generator = Crypto.Random.new().read
@@ -981,12 +927,6 @@ def new_keys_generation(type):
     except subprocess.CalledProcessError:
         print('ERROR: Connection to host failed!')
     return (1)
-
-@app.route('/clavessh')
-def clavessh():
-    #if not (os.path.isfile("../../../C:/Users/anavel/.ssh/id_rsan.pub")):
-    new_sshkeys_generation()
-    return("hecho")
 
 
 @app.route('/clavessensores')
