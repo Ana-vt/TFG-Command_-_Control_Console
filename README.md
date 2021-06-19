@@ -10,7 +10,7 @@ Para instalar y ejecutar correctamente el proyecto se deben seguir los siguiente
   - 2.4 Ejecutar el fichero descargado
   - 2.5 Seleccionar developer default
   - 2.6 A continuación pulsar NEXT ( no seleccionar descarga de manual, no es necesario)
-  - 2.7 Finalmente pulsar EXECUTE y esperar a que termine la ejecución. Cuando esta finalice se debe ingresar un usuario y contraseña
+  - 2.7 Finalmente pulsar EXECUTE y esperar a que termine la ejecución. Cuando esta finalice se debe ingresar un usuario y contraseña e importar **flask_usuarios.sql**
 3. Utilizar un editor de código, se recomienda **Visual Studio Code** :bangbang:
 4. Clonar el repositorio con el comando *git clone* https://github.com/Ana-vt/TFG-Consola-cibersituacional.git
 5. Abrir el terminal de Visual Studio y ejecutar ***pip install -r requirements.txt***
